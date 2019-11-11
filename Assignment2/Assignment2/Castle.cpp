@@ -573,19 +573,66 @@ void Castle::LoadTextures()
 		mCommandList.Get(), treeArrayTex->Filename.c_str(),
 		treeArrayTex->Resource, treeArrayTex->UploadHeap));
 
-
-	auto bricksTex = std::make_unique<Texture>();
-	bricksTex->Name = "bricksTex";
-	bricksTex->Filename = L"../../Textures/bricks.dds";
+	auto brickArrayTex = std::make_unique<Texture>();
+	brickArrayTex->Name = "brickArrayTex";
+	brickArrayTex->Filename = L"../../Textures/bricks2.dds";
 	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
-		mCommandList.Get(), bricksTex->Filename.c_str(),
-		bricksTex->Resource, bricksTex->UploadHeap));
+		mCommandList.Get(), brickArrayTex->Filename.c_str(),
+		brickArrayTex->Resource, brickArrayTex->UploadHeap));
+
+	auto brickDarkTex = std::make_unique<Texture>();
+	brickDarkTex->Name = "brickDarkTex";
+	brickDarkTex->Filename = L"../../Textures/bricks4.dds";
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
+		mCommandList.Get(), brickDarkTex->Filename.c_str(),
+		brickDarkTex->Resource, brickDarkTex->UploadHeap));
+
+	auto bricks3 = std::make_unique<Texture>();
+	bricks3->Name = "bricks3";
+	bricks3->Filename = L"../../Textures/bricks3.dds";
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
+		mCommandList.Get(), bricks3->Filename.c_str(),
+		bricks3->Resource, bricks3->UploadHeap));
+
+	auto stone = std::make_unique<Texture>();
+	stone->Name = "stone";
+	stone->Filename = L"../../Textures/stone.dds";
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
+		mCommandList.Get(), stone->Filename.c_str(),
+		stone->Resource, stone->UploadHeap));
+
+	auto black = std::make_unique<Texture>();
+	black->Name = "black";
+	black->Filename = L"../../Textures/black.dds";
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
+		mCommandList.Get(), black->Filename.c_str(),
+		black->Resource, black->UploadHeap));
+
+	auto sims = std::make_unique<Texture>();
+	sims->Name = "sims";
+	sims->Filename = L"../../Textures/sims.dds";
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
+		mCommandList.Get(), sims->Filename.c_str(),
+		sims->Resource, sims->UploadHeap));
+
+	auto bricksOnAcid = std::make_unique<Texture>();
+	bricksOnAcid->Name = "bricksOnAcid";
+	bricksOnAcid->Filename = L"../../Textures/bricksOnAcid.dds";
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(md3dDevice.Get(),
+		mCommandList.Get(), bricksOnAcid->Filename.c_str(),
+		bricksOnAcid->Resource, bricksOnAcid->UploadHeap));
 
 	mTextures[grassTex->Name] = std::move(grassTex);
 	mTextures[waterTex->Name] = std::move(waterTex);
 	mTextures[fenceTex->Name] = std::move(fenceTex);
 	mTextures[treeArrayTex->Name] = std::move(treeArrayTex);
-	mTextures[bricksTex->Name] = std::move(bricksTex);
+	mTextures[brickArrayTex->Name] = std::move(brickArrayTex);
+	mTextures[brickDarkTex->Name] = std::move(brickDarkTex);
+	mTextures[bricks3->Name] = std::move(bricks3);
+	mTextures[stone->Name] = std::move(stone);
+	mTextures[black->Name] = std::move(black);
+	mTextures[sims->Name] = std::move(sims);
+	mTextures[bricksOnAcid->Name] = std::move(bricksOnAcid);
 }
 
 void Castle::BuildRootSignature()
@@ -634,7 +681,7 @@ void Castle::BuildDescriptorHeaps()
 	// Create the SRV heap.
 	//
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	srvHeapDesc.NumDescriptors = 5;
+	srvHeapDesc.NumDescriptors = 11;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&mSrvDescriptorHeap)));
@@ -648,7 +695,13 @@ void Castle::BuildDescriptorHeaps()
 	auto waterTex = mTextures["waterTex"]->Resource;
 	auto fenceTex = mTextures["fenceTex"]->Resource;
 	auto treeArrayTex = mTextures["treeArrayTex"]->Resource;
-	auto bricksTex = mTextures["bricksTex"]->Resource;
+	auto brickTex = mTextures["brickArrayTex"]->Resource;
+	auto brickDarkTex = mTextures["brickDarkTex"]->Resource;
+	auto bricks3 = mTextures["bricks3"]->Resource;
+	auto stone = mTextures["stone"]->Resource;
+	auto black = mTextures["black"]->Resource;
+	auto sims = mTextures["sims"]->Resource;
+	auto bricksOnAcid = mTextures["bricksOnAcid"]->Resource;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -670,11 +723,48 @@ void Castle::BuildDescriptorHeaps()
 
 	// next descriptor
 	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
-	srvDesc.Format = bricksTex->GetDesc().Format;
-	md3dDevice->CreateShaderResourceView(bricksTex.Get(), &srvDesc, hDescriptor);
+	srvDesc.Format = brickTex->GetDesc().Format;
+	md3dDevice->CreateShaderResourceView(brickTex.Get(), &srvDesc, hDescriptor);
 
 	// next descriptor
 	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+
+	srvDesc.Format = brickDarkTex->GetDesc().Format;
+	md3dDevice->CreateShaderResourceView(brickDarkTex.Get(), &srvDesc, hDescriptor);
+
+	// next descriptor
+	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+
+	srvDesc.Format = bricks3->GetDesc().Format;
+	md3dDevice->CreateShaderResourceView(bricks3.Get(), &srvDesc, hDescriptor);
+
+	// next descriptor
+	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+
+	srvDesc.Format = stone->GetDesc().Format;
+	md3dDevice->CreateShaderResourceView(stone.Get(), &srvDesc, hDescriptor);
+
+	// next descriptor
+	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+
+	srvDesc.Format = black->GetDesc().Format;
+	md3dDevice->CreateShaderResourceView(black.Get(), &srvDesc, hDescriptor);
+
+	// next descriptor
+	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+
+	srvDesc.Format = sims->GetDesc().Format;
+	md3dDevice->CreateShaderResourceView(sims.Get(), &srvDesc, hDescriptor);
+
+	// next descriptor
+	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+
+	srvDesc.Format = bricksOnAcid->GetDesc().Format;
+	md3dDevice->CreateShaderResourceView(bricksOnAcid.Get(), &srvDesc, hDescriptor);
+
+	// next descriptor
+	hDescriptor.Offset(1, mCbvSrvDescriptorSize);
+
 	auto desc = treeArrayTex->GetDesc();
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
 	srvDesc.Format = treeArrayTex->GetDesc().Format;
@@ -1435,15 +1525,78 @@ void Castle::BuildMaterials()
 	auto treeSprites = std::make_unique<Material>();
 	treeSprites->Name = "treeSprites";
 	treeSprites->MatCBIndex = 3;
-	treeSprites->DiffuseSrvHeapIndex = 4;
+	treeSprites->DiffuseSrvHeapIndex = 10;
 	treeSprites->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	treeSprites->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
 	treeSprites->Roughness = 0.125f;
+
+	auto brick = std::make_unique<Material>();
+	brick->Name = "brick";
+	brick->MatCBIndex = 4;
+	brick->DiffuseSrvHeapIndex = 3;
+	brick->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	brick->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	brick->Roughness = 0.125f;
+
+	auto brickDark = std::make_unique<Material>();
+	brickDark->Name = "brickDark";
+	brickDark->MatCBIndex = 5;
+	brickDark->DiffuseSrvHeapIndex = 4;
+	brickDark->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	brickDark->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	brickDark->Roughness = 0.125f;
+
+	auto bricks3 = std::make_unique<Material>();
+	bricks3->Name = "bricks3";
+	bricks3->MatCBIndex = 6;
+	bricks3->DiffuseSrvHeapIndex = 5;
+	bricks3->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	bricks3->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	bricks3->Roughness = 0.125f;
+
+	auto stone = std::make_unique<Material>();
+	stone->Name = "stone";
+	stone->MatCBIndex = 7;
+	stone->DiffuseSrvHeapIndex = 6;
+	stone->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	stone->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	stone->Roughness = 0.125f;
+
+	auto black = std::make_unique<Material>();
+	black->Name = "black";
+	black->MatCBIndex = 8;
+	black->DiffuseSrvHeapIndex = 7;
+	black->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	black->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	black->Roughness = 0.125f;
+
+	auto sims = std::make_unique<Material>();
+	sims->Name = "sims";
+	sims->MatCBIndex = 9;
+	sims->DiffuseSrvHeapIndex = 8;
+	sims->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	sims->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	sims->Roughness = 0.125f;
+
+	auto bricksOnAcid = std::make_unique<Material>();
+	bricksOnAcid->Name = "bricksOnAcid";
+	bricksOnAcid->MatCBIndex = 10;
+	bricksOnAcid->DiffuseSrvHeapIndex = 9;
+	bricksOnAcid->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	bricksOnAcid->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	bricksOnAcid->Roughness = 0.125f;
 
 	mMaterials["grass"] = std::move(grass);
 	mMaterials["water"] = std::move(water);
 	mMaterials["wirefence"] = std::move(wirefence);
 	mMaterials["treeSprites"] = std::move(treeSprites);
+	mMaterials["brick"] = std::move(brick);
+	mMaterials["brickDark"] = std::move(brickDark);
+	mMaterials["bricks3"] = std::move(bricks3);
+	mMaterials["stone"] = std::move(stone);
+	mMaterials["black"] = std::move(black);
+	mMaterials["sims"] = std::move(sims);
+	mMaterials["bricksOnAcid"] = std::move(bricksOnAcid);
 }
 
 void Castle::BuildRenderItems()

@@ -933,18 +933,18 @@ GeometryGenerator::MeshData  GeometryGenerator::CreateTriPrism()
 	meshData.Vertices.resize(12);
 	meshData.Indices32.resize(4 * 3);
 	int i = 0;
-	meshData.Vertices[i++] = Vertex(0,     0,        0     );// 0
-	meshData.Vertices[i++] = Vertex(0.5f,  0.866f,  -0.28f );// 1
-	meshData.Vertices[i++] = Vertex(1,     0,        0     );// 2
-	meshData.Vertices[i++] = Vertex(0,     0,        0     );// 3
-	meshData.Vertices[i++] = Vertex(1,     0,        0     );// 4
-	meshData.Vertices[i++] = Vertex(0.5f,  0,       -0.866f);// 5
-	meshData.Vertices[i++] = Vertex(0.5f,  0.866f,  -0.289f);// 6
-	meshData.Vertices[i++] = Vertex(0.5f,  0,       -0.866f);// 7
-	meshData.Vertices[i++] = Vertex(1,     0,        0     );// 8
-	meshData.Vertices[i++] = Vertex(0.5f,  0,       -0.866f);// 9
-	meshData.Vertices[i++] = Vertex(0.5f,  0.866f,  -0.289f);// 10
-	meshData.Vertices[i++] = Vertex(0,     0,        0     );// 11
+	meshData.Vertices[i++] = Vertex(0,     0,        0     , 0, 0, 0, 0, 0, 0,    0,    1);// 0
+	meshData.Vertices[i++] = Vertex(0.5f,  0.866f,  -0.28f , 0, 0, 0, 0, 0, 0, 0.5f,    0);// 1
+	meshData.Vertices[i++] = Vertex(1,     0,        0     , 0, 0, 0, 0, 0, 0,    1,    1);// 2
+	meshData.Vertices[i++] = Vertex(0,     0,        0     , 0, 0, 0, 0, 0, 0,    0,    0);// 3
+	meshData.Vertices[i++] = Vertex(1,     0,        0     , 0, 0, 0, 0, 0, 0,    1,    0);// 4
+	meshData.Vertices[i++] = Vertex(0.5f,  0,       -0.866f, 0, 0, 0, 0, 0, 0, 0.5f,    1);// 5
+	meshData.Vertices[i++] = Vertex(0.5f,  0.866f,  -0.289f, 0, 0, 0, 0, 0, 0,    0, 0.5f);// 6
+	meshData.Vertices[i++] = Vertex(0.5f,  0,       -0.866f, 0, 0, 0, 0, 0, 0,    1,    0);// 7
+	meshData.Vertices[i++] = Vertex(1,     0,        0     , 0, 0, 0, 0, 0, 0,    1,    1);// 8
+	meshData.Vertices[i++] = Vertex(0.5f,  0,       -0.866f, 0, 0, 0, 0, 0, 0,    0,    0);// 9
+	meshData.Vertices[i++] = Vertex(0.5f,  0.866f,  -0.289f, 0, 0, 0, 0, 0, 0,    1, 0.5f);// 10
+	meshData.Vertices[i++] = Vertex(0,     0,        0     , 0, 0, 0, 0, 0, 0,    0,    1);// 11
 
 	// Centering X and Y
 	
@@ -975,36 +975,36 @@ GeometryGenerator::MeshData GeometryGenerator::CreateCube() {
 	/*
 	 * This is the first set - from 0 to 7
 	 */
-	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide,  halfCubeSide);	// 0,1                            
-	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide,  halfCubeSide);	// 1,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide,  halfCubeSide);	// 1,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide,  halfCubeSide);	// 0,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide, -halfCubeSide);	// 0,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide, -halfCubeSide);	// 1,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide, -halfCubeSide);	// 1,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide, -halfCubeSide);	// 0,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,1.f);	// 0,1                            
+	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,1.f);	// 1,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,0.f);	// 1,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,0.f);	// 0,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,1.f);	// 0,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,1.f);	// 1,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,0.f);	// 1,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,0.f);	// 0,0
 	/*
  	 * This is the second set - from 8 to 15
 	 */
-	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide,  halfCubeSide);	// 0,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide,  halfCubeSide);	// 1,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide,  halfCubeSide);	// 1,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide,  halfCubeSide);	// 0,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide, -halfCubeSide);	// 0,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide, -halfCubeSide);	// 1,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide, -halfCubeSide);	// 1,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide, -halfCubeSide);	// 0,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,1.f);	// 0,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,0.f);	// 1,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,1.f);	// 1,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,1.f);	// 0,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,1.f);	// 0,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,0.f);	// 1,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,0.f);	// 1,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,0.f);	// 0,0
 	/*
 	 * This is the third set - from 16 to 23
 	 */
-	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide,  halfCubeSide);	// 0,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide,  halfCubeSide);	// 1,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide,  halfCubeSide);	// 1,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide,  halfCubeSide);	// 0,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide, -halfCubeSide);	// 0,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide, -halfCubeSide);	// 1,1
-	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide, -halfCubeSide);	// 1,0
-	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide, -halfCubeSide);	// 0,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,0.f);	// 0,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,1.f);	// 1,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,0.f);	// 1,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide,  halfCubeSide, 0, 0, 0, 0, 0, 0, 0.f,1.f);	// 0,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide, -halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,0.f);	// 0,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide, -halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,1.f);	// 1,1
+	meshData.Vertices[i++] = Vertex( halfCubeSide,  halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,0.f);	// 1,0
+	meshData.Vertices[i++] = Vertex(-halfCubeSide,  halfCubeSide, -halfCubeSide, 0, 0, 0, 0, 0, 0, 1.f,1.f);	// 0,0
 
 	i = 0;
 	// front
@@ -1040,22 +1040,22 @@ GeometryGenerator::MeshData GeometryGenerator::CreatePyramid() {
 	float halfPyramidSide = 0.5f;
 	float pyramidHeight = 1.0f;
 
-	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f,  halfPyramidSide); // 00-FRONT_1
-	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f,  halfPyramidSide); // 01-FRONT_2
-	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f, -halfPyramidSide); // 02-BACK_1
-	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f, -halfPyramidSide); // 03-BACK_2
-	meshData.Vertices[i++] = Vertex( 0.0f,            pyramidHeight, 0.0f	); // 04-TOP_1
-	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f,  halfPyramidSide); // 05-LEFT_2
-	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f,  halfPyramidSide); // 06-RIGHT_1
-	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f, -halfPyramidSide); // 07-RIGHT_2
-	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f, -halfPyramidSide); // 08-LEFT_1
-	meshData.Vertices[i++] = Vertex( 0.0f,            pyramidHeight, 0.0f	); // 09-TOP_2
-	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f,  halfPyramidSide); // 10-BOTTOM_1
-	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f,  halfPyramidSide); // 11-BOTTOM_2
-	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f, -halfPyramidSide); // 12-BOTTOM_3
-	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f, -halfPyramidSide); // 13-BOTTOM_4
-	meshData.Vertices[i++] = Vertex( 0.0f,            pyramidHeight, 0.0f	); // 04-TOP_3
-	meshData.Vertices[i++] = Vertex( 0.0f,            pyramidHeight, 0.0f	); // 04-TOP_4
+	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f,  halfPyramidSide, 0, 0, 0, 0, 0, 0,  0.f, 1.f); // 00-FRONT_1
+	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f,  halfPyramidSide, 0, 0, 0, 0, 0, 0,  1.f, 1.f); // 01-FRONT_2
+	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f, -halfPyramidSide, 0, 0, 0, 0, 0, 0,  0.f, 1.f); // 02-BACK_1
+	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f, -halfPyramidSide, 0, 0, 0, 0, 0, 0,  1.f, 1.f); // 03-BACK_2
+	meshData.Vertices[i++] = Vertex( 0.0f,            pyramidHeight, 0.0f	, 0, 0, 0, 0, 0, 0, 0.5f, 0.f); // 04-TOP_1
+	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f,  halfPyramidSide, 0, 0, 0, 0, 0, 0,  1.f, 1.f); // 05-LEFT_2
+	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f,  halfPyramidSide, 0, 0, 0, 0, 0, 0,  0.f, 1.f); // 06-RIGHT_1
+	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f, -halfPyramidSide, 0, 0, 0, 0, 0, 0,  1.f, 1.f); // 07-RIGHT_2
+	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f, -halfPyramidSide, 0, 0, 0, 0, 0, 0,  0.f, 1.f); // 08-LEFT_1
+	meshData.Vertices[i++] = Vertex( 0.0f,            pyramidHeight, 0.0f	, 0, 0, 0, 0, 0, 0, 0.5f, 0.f); // 09-TOP_2
+	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f,  halfPyramidSide, 0, 0, 0, 0, 0, 0,  0.f, 0.f); // 10-BOTTOM_1
+	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f,  halfPyramidSide, 0, 0, 0, 0, 0, 0,  0.f, 1.f); // 11-BOTTOM_2
+	meshData.Vertices[i++] = Vertex( halfPyramidSide, 0.0f, -halfPyramidSide, 0, 0, 0, 0, 0, 0,  1.f, 1.f); // 12-BOTTOM_3
+	meshData.Vertices[i++] = Vertex(-halfPyramidSide, 0.0f, -halfPyramidSide, 0, 0, 0, 0, 0, 0,  1.f, 0.f); // 13-BOTTOM_4
+	meshData.Vertices[i++] = Vertex( 0.0f,            pyramidHeight, 0.0f	, 0, 0, 0, 0, 0, 0, 0.5f, 0.f); // 04-TOP_3
+	meshData.Vertices[i++] = Vertex( 0.0f,            pyramidHeight, 0.0f	, 0, 0, 0, 0, 0, 0, 0.5f, 0.f); // 04-TOP_4
 
 	/*
 	 Centering the pyramid
@@ -1094,34 +1094,34 @@ GeometryGenerator::MeshData GeometryGenerator::CreateHexagon() {
 	float sdDist = halfSideSize * sqrt(3) / 2; // side * sin(60)
 
 		// TOP_LID
-	meshData.Vertices[i++] = Vertex(-halfSideSize,			halfSideSize,  halfSideSize);
-	meshData.Vertices[i++] = Vertex( halfSideSize,			halfSideSize,  halfSideSize);
-	meshData.Vertices[i++] = Vertex( halfSideSize + sdDist,	halfSideSize,  0		   );
-	meshData.Vertices[i++] = Vertex( halfSideSize,			halfSideSize, -halfSideSize);
-	meshData.Vertices[i++] = Vertex(-halfSideSize,			halfSideSize, -halfSideSize);
-	meshData.Vertices[i++] = Vertex(-halfSideSize - sdDist,	halfSideSize,  0		   );
+	meshData.Vertices[i++] = Vertex(-halfSideSize,			halfSideSize,  halfSideSize, 0, 0, 0, 0, 0, 0,    0,    1);
+	meshData.Vertices[i++] = Vertex( halfSideSize,			halfSideSize,  halfSideSize, 0, 0, 0, 0, 0, 0,    0,    0);
+	meshData.Vertices[i++] = Vertex( halfSideSize + sdDist,	halfSideSize,  0		   , 0, 0, 0, 0, 0, 0,    0,    1);
+	meshData.Vertices[i++] = Vertex( halfSideSize,			halfSideSize, -halfSideSize, 0, 0, 0, 0, 0, 0, 0.5f, 0.5f);
+	meshData.Vertices[i++] = Vertex(-halfSideSize,			halfSideSize, -halfSideSize, 0, 0, 0, 0, 0, 0,    0,    1);
+	meshData.Vertices[i++] = Vertex(-halfSideSize - sdDist,	halfSideSize,  0		   , 0, 0, 0, 0, 0, 0,    0,    0);
 
 		// BOTTOM_LID
-	meshData.Vertices[i++] = Vertex(-halfSideSize,		   -halfSideSize,  halfSideSize);
-	meshData.Vertices[i++] = Vertex( halfSideSize,		   -halfSideSize,  halfSideSize);
-	meshData.Vertices[i++] = Vertex( halfSideSize + sdDist,-halfSideSize,  0		   );
-	meshData.Vertices[i++] = Vertex( halfSideSize,		   -halfSideSize, -halfSideSize);
-	meshData.Vertices[i++] = Vertex(-halfSideSize,		   -halfSideSize, -halfSideSize);
-	meshData.Vertices[i++] = Vertex(-halfSideSize - sdDist,-halfSideSize,  0		   );
+	meshData.Vertices[i++] = Vertex(-halfSideSize,		   -halfSideSize,  halfSideSize, 0, 0, 0, 0, 0, 0,    0,    1);
+	meshData.Vertices[i++] = Vertex( halfSideSize,		   -halfSideSize,  halfSideSize, 0, 0, 0, 0, 0, 0,    0,    0);
+	meshData.Vertices[i++] = Vertex( halfSideSize + sdDist,-halfSideSize,  0		   , 0, 0, 0, 0, 0, 0,    0,    1);
+	meshData.Vertices[i++] = Vertex( halfSideSize,		   -halfSideSize, -halfSideSize, 0, 0, 0, 0, 0, 0, 0.5f, 0.5f);
+	meshData.Vertices[i++] = Vertex(-halfSideSize,		   -halfSideSize, -halfSideSize, 0, 0, 0, 0, 0, 0,    0,    1);
+	meshData.Vertices[i++] = Vertex(-halfSideSize - sdDist,-halfSideSize,  0		   , 0, 0, 0, 0, 0, 0,    0,    0);
 
 	   // SIDES
-	meshData.Vertices[i++] = Vertex(-halfSideSize,			halfSideSize,  halfSideSize);
-	meshData.Vertices[i++] = Vertex(-halfSideSize,		   -halfSideSize,  halfSideSize);
-	meshData.Vertices[i++] = Vertex( halfSideSize,			halfSideSize,  halfSideSize);
-	meshData.Vertices[i++] = Vertex( halfSideSize,		   -halfSideSize,  halfSideSize);
-	meshData.Vertices[i++] = Vertex( halfSideSize + sdDist,	halfSideSize,  0		   );
-	meshData.Vertices[i++] = Vertex( halfSideSize + sdDist,-halfSideSize,  0		   );
-	meshData.Vertices[i++] = Vertex( halfSideSize,			halfSideSize, -halfSideSize);
-	meshData.Vertices[i++] = Vertex( halfSideSize,		   -halfSideSize, -halfSideSize);
-	meshData.Vertices[i++] = Vertex(-halfSideSize,			halfSideSize, -halfSideSize);
-	meshData.Vertices[i++] = Vertex(-halfSideSize,		   -halfSideSize, -halfSideSize);
-	meshData.Vertices[i++] = Vertex(-halfSideSize - sdDist,	halfSideSize,  0		   );
-	meshData.Vertices[i++] = Vertex(-halfSideSize - sdDist,-halfSideSize,  0		   );
+	meshData.Vertices[i++] = Vertex(-halfSideSize,			halfSideSize,  halfSideSize, 0, 0, 0, 0, 0, 0, 0, 0);
+	meshData.Vertices[i++] = Vertex(-halfSideSize,		   -halfSideSize,  halfSideSize, 0, 0, 0, 0, 0, 0, 0, 1);
+	meshData.Vertices[i++] = Vertex( halfSideSize,			halfSideSize,  halfSideSize, 0, 0, 0, 0, 0, 0, 1, 0);
+	meshData.Vertices[i++] = Vertex( halfSideSize,		   -halfSideSize,  halfSideSize, 0, 0, 0, 0, 0, 0, 1, 1);
+	meshData.Vertices[i++] = Vertex( halfSideSize + sdDist,	halfSideSize,  0		   , 0, 0, 0, 0, 0, 0, 0, 0);
+	meshData.Vertices[i++] = Vertex( halfSideSize + sdDist,-halfSideSize,  0		   , 0, 0, 0, 0, 0, 0, 0, 1);
+	meshData.Vertices[i++] = Vertex( halfSideSize,			halfSideSize, -halfSideSize, 0, 0, 0, 0, 0, 0, 1, 0);
+	meshData.Vertices[i++] = Vertex( halfSideSize,		   -halfSideSize, -halfSideSize, 0, 0, 0, 0, 0, 0, 1, 1);
+	meshData.Vertices[i++] = Vertex(-halfSideSize,			halfSideSize, -halfSideSize, 0, 0, 0, 0, 0, 0, 0, 0);
+	meshData.Vertices[i++] = Vertex(-halfSideSize,		   -halfSideSize, -halfSideSize, 0, 0, 0, 0, 0, 0, 0, 1);
+	meshData.Vertices[i++] = Vertex(-halfSideSize - sdDist,	halfSideSize,  0		   , 0, 0, 0, 0, 0, 0, 1, 0);
+	meshData.Vertices[i++] = Vertex(-halfSideSize - sdDist,-halfSideSize,  0		   , 0, 0, 0, 0, 0, 0, 1, 1);
 
 	i = 0;
 		// top
@@ -1223,6 +1223,19 @@ GeometryGenerator::MeshData GeometryGenerator::CreateSimsIndicator() {
 	meshData.Indices32[i++] = 30; meshData.Indices32[i++] =  31; meshData.Indices32[i++] = 32;
 	meshData.Indices32[i++] = 33; meshData.Indices32[i++] = 34; meshData.Indices32[i++] = 35;
 
+
+	for (int txcIndex = 0; txcIndex < 36; txcIndex++) {
+		if (txcIndex % 3 == 0) {
+			meshData.Vertices[txcIndex].TexC = DirectX::XMFLOAT2(0.5f, 0.5f);
+		}
+		else if (txcIndex % 3 == 1) {
+			meshData.Vertices[txcIndex].TexC = DirectX::XMFLOAT2(1, 0);
+		}
+		else {
+			meshData.Vertices[txcIndex].TexC = DirectX::XMFLOAT2(1, 1);
+		}
+	}
+
 	NormalCalc(meshData, i);
 	return meshData;
 }
@@ -1283,6 +1296,28 @@ GeometryGenerator::MeshData GeometryGenerator::CreateMyCylinder() {
 	for (int j = 0; j < vertices; j++) {
 		meshData.Indices32[j] = j;
 	}
+	i = 0;
+	for (int txcIndex = 0; txcIndex < baseTriangles; txcIndex++) {
+		/* Base TOP */
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.5f, 0.5f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 0.0f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+
+		/* DOWN Origin */
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.5f, 0.5f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 0.0f);
+
+		/* SIDE 1 */
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 0.0f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 1.0f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+
+		/* SIDE 2 */
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 0.0f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 0.0f);
+	}
 
 	NormalCalc(meshData, i);
 	return meshData;
@@ -1329,6 +1364,18 @@ GeometryGenerator::MeshData GeometryGenerator::CreateCone() {
 	for (int j = 0; j < vertices; j++) {
 		meshData.Indices32[j] = j;
 	}
+
+	i = 0;
+	for (int txcIndex = 0; txcIndex < baseTriangles; txcIndex++) {
+		/* DOWN */
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.5f, 0.5f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 0.0f);
+		/* Side */
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 0.5f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 0.0f);
+		meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+	}														  
 
 	NormalCalc(meshData, i);
 	return meshData;
@@ -1395,6 +1442,32 @@ GeometryGenerator::MeshData GeometryGenerator::CreateMySphere() {
 		meshData.Indices32[j] = j;
 	}
 
+	i = 0;
+	for (int longAngle = 0; longAngle < 360; longAngle += degrees) {
+		for (int latAngle = 0; latAngle < 360; latAngle += degrees) {
+			if (latAngle == 0) {
+				// TOP
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.5f, 0.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 1.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+			}
+			else if (360 - latAngle <= degrees) {
+				// BOTTOM
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.5f, 0.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 1.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+			}
+			else {
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 0.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 1.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 1.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(1.0f, 0.0f);
+				meshData.Vertices[i++].TexC = DirectX::XMFLOAT2(0.0f, 0.0f);
+			}
+
+		}
+	}
 	NormalCalc(meshData, i);
 	return meshData;
 }
