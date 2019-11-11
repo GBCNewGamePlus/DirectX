@@ -4,9 +4,40 @@
 
 #include "GeometryGenerator.h"
 #include <algorithm>
+#include <DirectXMath.h>
 #define PI 3.14159265
 
 using namespace DirectX;
+
+float GeometryGenerator::EpsilonCorrector(float value) {
+	return (value < 3 * FLT_EPSILON && value > -3 * FLT_EPSILON) ? 0.0f : value;
+}
+
+DirectX::XMFLOAT3 GeometryGenerator::CrossProduct(DirectX::XMFLOAT3 vect_A, DirectX::XMFLOAT3 vect_B)
+{
+	XMFLOAT3 cross_P;
+	cross_P.x = vect_A.y * vect_B.z - vect_A.z * vect_B.y;
+	cross_P.y = vect_A.x * vect_B.z - vect_A.z * vect_B.x;
+	cross_P.z = vect_A.x * vect_B.y - vect_A.y * vect_B.x;
+	float length = sqrt(cross_P.x * cross_P.x + cross_P.y * cross_P.y + cross_P.z * cross_P.z);
+	cross_P.x = epsilonCorrector(cross_P.x / length);
+	cross_P.y = epsilonCorrector(cross_P.y / length);
+	cross_P.z = epsilonCorrector(cross_P.z / length);
+	return cross_P;
+}
+////
+//XMFLOAT3 GeometryGenerator::vertexNormalGenerator(XMFLOAT3 left, XMFLOAT3 center, XMFLOAT3 right) {
+//	XMFLOAT3 A, B, Normal;
+//	A.x = left.x - center.x;
+//	A.y = left.y - center.y;
+//	A.z = left.z - center.z;
+//	B.x = right.x - center.x;
+//	B.y = right.y - center.y;
+//	B.z = right.z - center.z;
+//	Normal = crossProduct(A, B);
+//	return Normal;
+//}
+
 
 GeometryGenerator::MeshData GeometryGenerator::CreateBox(float width, float height, float depth, uint32 numSubdivisions)
 {
