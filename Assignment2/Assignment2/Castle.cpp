@@ -195,7 +195,7 @@ bool Castle::Initialize()
 	// so we have to query this information.
 	mCbvSrvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	mWaves = std::make_unique<Waves>(128, 128, 1.0f, 0.03f, 4.0f, 0.2f);
+	mWaves = std::make_unique<Waves>(155, 155, 1.0f, 0.03f, 4.0f, 0.2f);
 
 	LoadTextures();
 	BuildRootSignature();
@@ -363,7 +363,7 @@ void Castle::OnMouseMove(WPARAM btnState, int x, int y)
 		mRadius += dx - dy;
 
 		// Restrict the radius.
-		mRadius = MathHelper::Clamp(mRadius, 5.0f, 150.0f);
+		mRadius = MathHelper::Clamp(mRadius, 5.0f, 600.0f);
 	}
 
 	mLastMousePos.x = x;
@@ -719,7 +719,21 @@ void Castle::BuildLandGeometry()
 	{
 		auto& p = grid.Vertices[i].Position;
 		vertices[i].Pos = p;
-		vertices[i].Pos.y = GetHillsHeight(p.x, p.z);
+		//vertices[i].Pos.y = GetHillsHeight(p.x, p.z);
+		float xPos = vertices[i].Pos.x;
+		float zPos = vertices[i].Pos.z;
+		if (xPos < -70 || xPos > 70 || zPos < -70 || zPos > 70)
+		{
+			vertices[i].Pos.y = 2;
+		}
+		else if ((xPos > -60 && xPos < 60) && (zPos > -60 && zPos < 60))
+		{
+			vertices[i].Pos.y = 2;
+		}
+		else
+		{
+			vertices[i].Pos.y = -20;
+		}
 		vertices[i].Normal = GetHillsNormal(p.x, p.z);
 		vertices[i].TexC = grid.Vertices[i].TexC;
 	}
@@ -873,9 +887,10 @@ void Castle::BuildTreeSpritesGeometry()
 		XMFLOAT2 Size;
 	};
 
-	static const int treeCount = 16;
-	std::array<TreeSpriteVertex, 16> vertices;
-	for (UINT i = 0; i < treeCount; ++i)
+	static const int treeCount = 8;
+	std::array<TreeSpriteVertex, 8> vertices;
+
+	/*for (UINT i = 0; i < treeCount; ++i)
 	{
 		float x = MathHelper::RandF(-45.0f, 45.0f);
 		float z = MathHelper::RandF(-45.0f, 45.0f);
@@ -886,13 +901,23 @@ void Castle::BuildTreeSpritesGeometry()
 
 		vertices[i].Pos = XMFLOAT3(x, y, z);
 		vertices[i].Size = XMFLOAT2(20.0f, 20.0f);
+	}*/
+
+	vertices[0].Pos = XMFLOAT3(-75, 10, 75);
+	vertices[1].Pos = XMFLOAT3(75, 10, 75);
+	vertices[2].Pos = XMFLOAT3(-75, 10, -75);
+	vertices[3].Pos = XMFLOAT3(75, 10, -75);
+	vertices[4].Pos = XMFLOAT3(0, 10, 75);
+	vertices[5].Pos = XMFLOAT3(0, 10, -75);
+	vertices[6].Pos = XMFLOAT3(75, 10, 0);
+	vertices[7].Pos = XMFLOAT3(-75, 10, 0);
+
+	for (UINT i = 0; i < treeCount; ++i)
+	{
+		vertices[i].Size = XMFLOAT2(20.0f, 20.0f);
 	}
 
-	std::array<std::uint16_t, 16> indices =
-	{
-		0, 1, 2, 3, 4, 5, 6, 7,
-		8, 9, 10, 11, 12, 13, 14, 15
-	};
+	std::array<std::uint16_t, 8> indices = {0, 1, 2, 3, 4, 5, 6, 7};
 
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(TreeSpriteVertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
