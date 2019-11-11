@@ -136,8 +136,9 @@ public:
 private:
 	float EpsilonCorrector(float value);
 	DirectX::XMFLOAT3 CrossProduct(DirectX::XMFLOAT3 vect_A, DirectX::XMFLOAT3 vect_B);
-	DirectX::XMFLOAT3 vertexNormalGenerator(DirectX::XMFLOAT3 left, DirectX::XMFLOAT3 center, DirectX::XMFLOAT3 right);
-	void Subdivide( & meshData);
+	DirectX::XMFLOAT3 VertexNormalGenerator(DirectX::XMFLOAT3 left, DirectX::XMFLOAT3 center, DirectX::XMFLOAT3 right);
+	void NormalCalc(MeshData& meshData, int limits);
+	void Subdivide(MeshData& meshData);
     Vertex MidPoint(const Vertex& v0, const Vertex& v1);
     void BuildCylinderTopCap(float bottomRadius, float topRadius, float height, uint32 sliceCount, uint32 stackCount, MeshData& meshData);
     void BuildCylinderBottomCap(float bottomRadius, float topRadius, float height, uint32 sliceCount, uint32 stackCount, MeshData& meshData);

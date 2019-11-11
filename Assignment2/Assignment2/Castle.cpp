@@ -1,7 +1,7 @@
 #include "../../Common/d3dApp.h"
 #include "../../Common/MathHelper.h"
 #include "../../Common/UploadBuffer.h"
-#include "../../Common/GeometryGenerator.h"
+#include "GeometryGenerator.h"
 #include "FrameResource.h"
 #include "Waves.h"
 
@@ -90,6 +90,7 @@ private:
 	void BuildWavesGeometry();
 	void BuildBoxGeometry();
 	void BuildTreeSpritesGeometry();
+	void BuildShapeGeometry();
 	void BuildPSOs();
 	void BuildFrameResources();
 	void BuildMaterials();
@@ -100,6 +101,8 @@ private:
 
 	float GetHillsHeight(float x, float z)const;
 	XMFLOAT3 GetHillsNormal(float x, float z)const;
+
+	void BuildRenderGeoItem(int index, std::string itemName, std::string material, XMFLOAT3 scaling, XMFLOAT3 rotation, XMFLOAT3 translation);
 
 private:
 
@@ -205,6 +208,7 @@ bool Castle::Initialize()
 	BuildWavesGeometry();
 	BuildBoxGeometry();
 	BuildTreeSpritesGeometry();
+	BuildShapeGeometry();
 	BuildMaterials();
 	BuildRenderItems();
 	BuildFrameResources();
@@ -889,7 +893,315 @@ void Castle::BuildBoxGeometry()
 
 	mGeometries["boxGeo"] = std::move(geo);
 }
+void Castle::BuildShapeGeometry()
+{
+	GeometryGenerator geoGen;
+	GeometryGenerator::MeshData box = geoGen.CreateBox(1.5f, 1.5f, 1.5f, 3);
+	GeometryGenerator::MeshData grid = geoGen.CreateGrid(20.0f, 30.0f, 60, 40);
+	GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
+	GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(0.5f, 0.0f, 3.0f, 20, 20);
 
+	//// it all starts now
+	GeometryGenerator::MeshData star = geoGen.CreateStar();
+	GeometryGenerator::MeshData wedge = geoGen.CreateWedge();
+	GeometryGenerator::MeshData triPrism = geoGen.CreateTriPrism();
+	GeometryGenerator::MeshData cube = geoGen.CreateCube();
+	GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid();
+	GeometryGenerator::MeshData hexagon = geoGen.CreateHexagon();
+	GeometryGenerator::MeshData simsInd = geoGen.CreateSimsIndicator();
+	GeometryGenerator::MeshData myCylinder = geoGen.CreateMyCylinder();
+	GeometryGenerator::MeshData cone = geoGen.CreateCone();
+	GeometryGenerator::MeshData mySphere = geoGen.CreateMySphere();
+
+	//
+	// We are concatenating all the geometry into one big vertex/index buffer.  So
+	// define the regions in the buffer each submesh covers.
+	//
+
+	// Cache the vertex offsets to each object in the concatenated vertex buffer.
+	UINT boxVertexOffset = 0;
+	UINT gridVertexOffset = (UINT)box.Vertices.size();
+	UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
+	UINT cylinderVertexOffset = sphereVertexOffset + (UINT)sphere.Vertices.size();
+
+	UINT starVertexOffset = cylinderVertexOffset + (UINT)cylinder.Vertices.size();
+	UINT wedgeVertexOffset = starVertexOffset + (UINT)star.Vertices.size();
+	UINT triPrismVertexOffset = wedgeVertexOffset + (UINT)wedge.Vertices.size();
+	UINT cubeVertexOffset = triPrismVertexOffset + (UINT)triPrism.Vertices.size();
+	UINT pyramidVertexOffset = cubeVertexOffset + (UINT)cube.Vertices.size();
+	UINT hexagonVertexOffset = pyramidVertexOffset + (UINT)pyramid.Vertices.size();
+	UINT simsIndVertexOffset = hexagonVertexOffset + (UINT)hexagon.Vertices.size();
+	UINT myCylinderVertexOffset = simsIndVertexOffset + (UINT)simsInd.Vertices.size();
+	UINT coneVertexOffset = myCylinderVertexOffset + (UINT)myCylinder.Vertices.size();
+	UINT mySphereVertexOffset = coneVertexOffset + (UINT)cone.Vertices.size();
+
+	// Cache the starting index for each object in the concatenated index buffer.
+	UINT boxIndexOffset = 0;
+	UINT gridIndexOffset = (UINT)box.Indices32.size();
+	UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
+	UINT cylinderIndexOffset = sphereIndexOffset + (UINT)sphere.Indices32.size();
+
+	UINT starIndexOffset = cylinderIndexOffset + (UINT)cylinder.Indices32.size();
+	UINT wedgeIndexOffset = starIndexOffset + (UINT)star.Indices32.size();
+	UINT triPrismIndexOffset = wedgeIndexOffset + (UINT)wedge.Indices32.size();
+	UINT cubeIndexOffset = triPrismIndexOffset + (UINT)triPrism.Indices32.size();
+	UINT pyramidIndexOffset = cubeIndexOffset + (UINT)cube.Indices32.size();
+	UINT hexagonIndexOffset = pyramidIndexOffset + (UINT)pyramid.Indices32.size();
+	UINT simsIndIndexOffset = hexagonIndexOffset + (UINT)hexagon.Indices32.size();
+	UINT myCylinderIndexOffset = simsIndIndexOffset + (UINT)simsInd.Indices32.size();
+	UINT coneIndexOffset = myCylinderIndexOffset + (UINT)myCylinder.Indices32.size();
+	UINT mySphereIndexOffset = coneIndexOffset + (UINT)cone.Indices32.size();
+
+	SubmeshGeometry boxSubmesh;
+	boxSubmesh.IndexCount = (UINT)box.Indices32.size();
+	boxSubmesh.StartIndexLocation = boxIndexOffset;
+	boxSubmesh.BaseVertexLocation = boxVertexOffset;
+
+	SubmeshGeometry gridSubmesh;
+	gridSubmesh.IndexCount = (UINT)grid.Indices32.size();
+	gridSubmesh.StartIndexLocation = gridIndexOffset;
+	gridSubmesh.BaseVertexLocation = gridVertexOffset;
+
+	SubmeshGeometry sphereSubmesh;
+	sphereSubmesh.IndexCount = (UINT)sphere.Indices32.size();
+	sphereSubmesh.StartIndexLocation = sphereIndexOffset;
+	sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
+
+	SubmeshGeometry cylinderSubmesh;
+	cylinderSubmesh.IndexCount = (UINT)cylinder.Indices32.size();
+	cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
+	cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
+
+	SubmeshGeometry starSubmesh;
+	starSubmesh.IndexCount = (UINT)star.Indices32.size();
+	starSubmesh.StartIndexLocation = starIndexOffset;
+	starSubmesh.BaseVertexLocation = starVertexOffset;
+
+	SubmeshGeometry wedgeSubmesh;
+	wedgeSubmesh.IndexCount = (UINT)wedge.Indices32.size();
+	wedgeSubmesh.StartIndexLocation = wedgeIndexOffset;
+	wedgeSubmesh.BaseVertexLocation = wedgeVertexOffset;
+
+	SubmeshGeometry triPrismSubmesh;
+	triPrismSubmesh.IndexCount = (UINT)triPrism.Indices32.size();
+	triPrismSubmesh.StartIndexLocation = triPrismIndexOffset;
+	triPrismSubmesh.BaseVertexLocation = triPrismVertexOffset;
+
+	SubmeshGeometry cubeSubmesh;
+	cubeSubmesh.IndexCount = (UINT)cube.Indices32.size();
+	cubeSubmesh.StartIndexLocation = cubeIndexOffset;
+	cubeSubmesh.BaseVertexLocation = cubeVertexOffset;
+
+	SubmeshGeometry pyramidSubmesh;
+	pyramidSubmesh.IndexCount = (UINT)pyramid.Indices32.size();
+	pyramidSubmesh.StartIndexLocation = pyramidIndexOffset;
+	pyramidSubmesh.BaseVertexLocation = pyramidVertexOffset;
+
+	SubmeshGeometry hexagonSubmesh;
+	hexagonSubmesh.IndexCount = (UINT)hexagon.Indices32.size();
+	hexagonSubmesh.StartIndexLocation = hexagonIndexOffset;
+	hexagonSubmesh.BaseVertexLocation = hexagonVertexOffset;
+
+	SubmeshGeometry simsIndSubmesh;
+	simsIndSubmesh.IndexCount = (UINT)simsInd.Indices32.size();
+	simsIndSubmesh.StartIndexLocation = simsIndIndexOffset;
+	simsIndSubmesh.BaseVertexLocation = simsIndVertexOffset;
+
+	SubmeshGeometry myCylinderSubmesh;
+	myCylinderSubmesh.IndexCount = (UINT)myCylinder.Indices32.size();
+	myCylinderSubmesh.StartIndexLocation = myCylinderIndexOffset;
+	myCylinderSubmesh.BaseVertexLocation = myCylinderVertexOffset;
+
+	SubmeshGeometry coneSubmesh;
+	coneSubmesh.IndexCount = (UINT)cone.Indices32.size();
+	coneSubmesh.StartIndexLocation = coneIndexOffset;
+	coneSubmesh.BaseVertexLocation = coneVertexOffset;
+
+	SubmeshGeometry mySphereSubmesh;
+	mySphereSubmesh.IndexCount = (UINT)mySphere.Indices32.size();
+	mySphereSubmesh.StartIndexLocation = mySphereIndexOffset;
+	mySphereSubmesh.BaseVertexLocation = mySphereVertexOffset;
+	//
+	// Extract the vertex elements we are interested in and pack the
+	// vertices of all the meshes into one vertex buffer.
+	//
+
+	auto totalVertexCount =
+		box.Vertices.size() +
+		grid.Vertices.size() +
+		sphere.Vertices.size() +
+		cylinder.Vertices.size() +
+		star.Vertices.size() +
+		wedge.Vertices.size() +
+		triPrism.Vertices.size() +
+		cube.Vertices.size() +
+		pyramid.Vertices.size() +
+		hexagon.Vertices.size() +
+		simsInd.Vertices.size() +
+		myCylinder.Vertices.size() +
+		cone.Vertices.size() +
+		mySphere.Vertices.size();
+
+	std::vector<Vertex> vertices(totalVertexCount);
+
+	UINT k = 0;
+	for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = box.Vertices[i].Position;
+		vertices[k].Normal = box.Vertices[i].Normal;
+		vertices[k].TexC = box.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = grid.Vertices[i].Position;
+		vertices[k].Normal = grid.Vertices[i].Normal;
+		vertices[k].TexC = grid.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = sphere.Vertices[i].Position;
+		vertices[k].Normal = sphere.Vertices[i].Normal;
+		vertices[k].TexC = sphere.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = cylinder.Vertices[i].Position;
+		vertices[k].Normal = cylinder.Vertices[i].Normal;
+		vertices[k].TexC = cylinder.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < star.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = star.Vertices[i].Position;
+		vertices[k].TexC = star.Vertices[i].TexC;
+		vertices[k].Normal = star.Vertices[i].Normal;
+	}
+
+	for (size_t i = 0; i < wedge.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = wedge.Vertices[i].Position;
+		vertices[k].Normal = wedge.Vertices[i].Normal;
+		vertices[k].TexC = wedge.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < triPrism.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = triPrism.Vertices[i].Position;
+		vertices[k].Normal = triPrism.Vertices[i].Normal;
+		vertices[k].TexC = triPrism.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < cube.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = cube.Vertices[i].Position;
+		vertices[k].Normal = cube.Vertices[i].Normal;
+		vertices[k].TexC = cube.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < pyramid.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = pyramid.Vertices[i].Position;
+		vertices[k].Normal = pyramid.Vertices[i].Normal;
+		vertices[k].TexC = pyramid.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < hexagon.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = hexagon.Vertices[i].Position;
+		vertices[k].Normal = hexagon.Vertices[i].Normal;
+		vertices[k].TexC = hexagon.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < simsInd.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = simsInd.Vertices[i].Position;
+		vertices[k].Normal = simsInd.Vertices[i].Normal;
+		vertices[k].TexC = simsInd.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < myCylinder.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = myCylinder.Vertices[i].Position;
+		vertices[k].Normal = myCylinder.Vertices[i].Normal;
+		vertices[k].TexC = myCylinder.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < cone.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = cone.Vertices[i].Position;
+		vertices[k].Normal = cone.Vertices[i].Normal;
+		vertices[k].TexC = cone.Vertices[i].TexC;
+	}
+
+	for (size_t i = 0; i < mySphere.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = mySphere.Vertices[i].Position;
+		vertices[k].Normal = mySphere.Vertices[i].Normal;
+		vertices[k].TexC = mySphere.Vertices[i].TexC;
+	}
+
+	std::vector<std::uint16_t> indices;
+	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
+	indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
+	indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
+	indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
+
+	indices.insert(indices.end(), std::begin(star.GetIndices16()), std::end(star.GetIndices16()));
+	indices.insert(indices.end(), std::begin(wedge.GetIndices16()), std::end(wedge.GetIndices16()));
+	indices.insert(indices.end(), std::begin(triPrism.GetIndices16()), std::end(triPrism.GetIndices16()));
+	indices.insert(indices.end(), std::begin(cube.GetIndices16()), std::end(cube.GetIndices16()));
+	indices.insert(indices.end(), std::begin(pyramid.GetIndices16()), std::end(pyramid.GetIndices16()));
+	indices.insert(indices.end(), std::begin(hexagon.GetIndices16()), std::end(hexagon.GetIndices16()));
+	indices.insert(indices.end(), std::begin(simsInd.GetIndices16()), std::end(simsInd.GetIndices16()));
+	indices.insert(indices.end(), std::begin(myCylinder.GetIndices16()), std::end(myCylinder.GetIndices16()));
+	indices.insert(indices.end(), std::begin(cone.GetIndices16()), std::end(cone.GetIndices16()));
+	indices.insert(indices.end(), std::begin(mySphere.GetIndices16()), std::end(mySphere.GetIndices16()));
+
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
+
+	auto geo = std::make_unique<MeshGeometry>();
+	geo->Name = "shapeGeo";
+
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
+	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
+	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+
+	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), vertices.data(), vbByteSize, geo->VertexBufferUploader);
+
+	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(), indices.data(), ibByteSize, geo->IndexBufferUploader);
+
+	geo->VertexByteStride = sizeof(Vertex);
+	geo->VertexBufferByteSize = vbByteSize;
+	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
+	geo->IndexBufferByteSize = ibByteSize;
+
+	geo->DrawArgs["box"] = boxSubmesh;
+	geo->DrawArgs["grid"] = gridSubmesh;
+	geo->DrawArgs["sphere"] = sphereSubmesh;
+	geo->DrawArgs["cylinder"] = cylinderSubmesh;
+
+	/* Our shapes */
+	geo->DrawArgs["star"] = starSubmesh;
+	geo->DrawArgs["wedge"] = wedgeSubmesh;
+	geo->DrawArgs["triPrism"] = triPrismSubmesh;
+	geo->DrawArgs["cube"] = cubeSubmesh;
+	geo->DrawArgs["pyramid"] = pyramidSubmesh;
+	geo->DrawArgs["hexagon"] = hexagonSubmesh;
+	geo->DrawArgs["simsInd"] = simsIndSubmesh;
+	geo->DrawArgs["myCylinder"] = myCylinderSubmesh;
+	geo->DrawArgs["cone"] = coneSubmesh;
+	geo->DrawArgs["mySphere"] = mySphereSubmesh;
+
+	mGeometries[geo->Name] = std::move(geo);
+}
 void Castle::BuildTreeSpritesGeometry()
 {
 	//step5
@@ -1073,6 +1385,25 @@ void Castle::BuildFrameResources()
 	}
 }
 
+void Castle::BuildRenderGeoItem(int index, std::string itemName, std::string material, XMFLOAT3 scaling, XMFLOAT3 rotation, XMFLOAT3 translation) {
+
+	auto genItem = std::make_unique<RenderItem>();
+
+	XMMATRIX transResult = XMMatrixScaling(scaling.x, scaling.y, scaling.z);
+	transResult *= XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), XMConvertToRadians(rotation.z));
+	transResult *= XMMatrixTranslation(translation.x, translation.y, translation.z);
+	XMStoreFloat4x4(&genItem->World, transResult);
+	genItem->ObjCBIndex = index;
+	genItem->Mat = mMaterials[material].get();
+	genItem->Geo = mGeometries["shapeGeo"].get();
+	genItem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	genItem->IndexCount = genItem->Geo->DrawArgs[itemName].IndexCount;
+	genItem->StartIndexLocation = genItem->Geo->DrawArgs[itemName].StartIndexLocation;
+	genItem->BaseVertexLocation = genItem->Geo->DrawArgs[itemName].BaseVertexLocation;
+	mRitemLayer[(int)RenderLayer::Opaque].push_back(genItem.get());
+	mAllRitems.push_back(std::move(genItem));
+
+}
 void Castle::BuildMaterials()
 {
 	auto grass = std::make_unique<Material>();
@@ -1117,49 +1448,49 @@ void Castle::BuildMaterials()
 
 void Castle::BuildRenderItems()
 {
+	int i = 0;
 	auto wavesRitem = std::make_unique<RenderItem>();
 	wavesRitem->World = MathHelper::Identity4x4();
 	XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
-	wavesRitem->ObjCBIndex = 0;
+	wavesRitem->ObjCBIndex = i++;
 	wavesRitem->Mat = mMaterials["water"].get();
 	wavesRitem->Geo = mGeometries["waterGeo"].get();
 	wavesRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
 	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
 	wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
-
 	mWavesRitem = wavesRitem.get();
-
 	mRitemLayer[(int)RenderLayer::Transparent].push_back(wavesRitem.get());
+	mAllRitems.push_back(std::move(wavesRitem));
 
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = MathHelper::Identity4x4();
 	XMStoreFloat4x4(&gridRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
-	gridRitem->ObjCBIndex = 1;
+	gridRitem->ObjCBIndex = i++;
 	gridRitem->Mat = mMaterials["grass"].get();
 	gridRitem->Geo = mGeometries["landGeo"].get();
 	gridRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
 	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
 	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
-
 	mRitemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
+	mAllRitems.push_back(std::move(gridRitem));
 
 	auto boxRitem = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
-	boxRitem->ObjCBIndex = 2;
+	boxRitem->ObjCBIndex = i++;
 	boxRitem->Mat = mMaterials["wirefence"].get();
 	boxRitem->Geo = mGeometries["boxGeo"].get();
 	boxRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
 	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
 	boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
-
 	mRitemLayer[(int)RenderLayer::AlphaTested].push_back(boxRitem.get());
+	mAllRitems.push_back(std::move(boxRitem));
 
 	auto treeSpritesRitem = std::make_unique<RenderItem>();
 	treeSpritesRitem->World = MathHelper::Identity4x4();
-	treeSpritesRitem->ObjCBIndex = 3;
+	treeSpritesRitem->ObjCBIndex = i++;
 	treeSpritesRitem->Mat = mMaterials["treeSprites"].get();
 	treeSpritesRitem->Geo = mGeometries["treeSpritesGeo"].get();
 	//step2
@@ -1169,11 +1500,11 @@ void Castle::BuildRenderItems()
 	treeSpritesRitem->BaseVertexLocation = treeSpritesRitem->Geo->DrawArgs["points"].BaseVertexLocation;
 
 	mRitemLayer[(int)RenderLayer::AlphaTestedTreeSprites].push_back(treeSpritesRitem.get());
-
-	mAllRitems.push_back(std::move(wavesRitem));
-	mAllRitems.push_back(std::move(gridRitem));
-	mAllRitems.push_back(std::move(boxRitem));
 	mAllRitems.push_back(std::move(treeSpritesRitem));
+
+	BuildRenderGeoItem(i++, "star", "grass", XMFLOAT3(15, 15, 10), XMFLOAT3(0, 90, 0), XMFLOAT3(21.55, 5.9, 0));
+
+
 }
 
 void Castle::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
