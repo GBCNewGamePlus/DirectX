@@ -487,13 +487,17 @@ void Castle::UpdateMainPassCB(const GameTimer& gt)
 	mMainPassCB.FarZ = 1000.0f;
 	mMainPassCB.TotalTime = gt.TotalTime();
 	mMainPassCB.DeltaTime = gt.DeltaTime();
-	mMainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	mMainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	mMainPassCB.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
-	mMainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	mMainPassCB.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
-	mMainPassCB.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	mMainPassCB.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+	mMainPassCB.AmbientLight = {0.4f, 0.4f, 0.4f, 1.0f };
+	//mMainPassCB.AmbientLight = {0.25f, 0.25f, 0.35f, 1.0f };
+	mMainPassCB.Lights[0].Strength = {0.6f, 0.6f, 0.6f};
+	mMainPassCB.Lights[0].Position = {0, 10, 0};
+	mMainPassCB.Lights[0].FalloffStart = 10;
+	mMainPassCB.Lights[0].FalloffEnd = 12;
+	mMainPassCB.Lights[1].Direction = {0, -1, 0};
+	mMainPassCB.Lights[1].Strength = {0.6f, 0.6f, 0.6f};
+	mMainPassCB.Lights[1].Position = {30, 10, 30};
+	mMainPassCB.Lights[1].FalloffStart = 10;
+	mMainPassCB.Lights[1].FalloffEnd = 12;
 
 	auto currPassCB = mCurrFrameResource->PassCB.get();
 	currPassCB->CopyData(0, mMainPassCB);
