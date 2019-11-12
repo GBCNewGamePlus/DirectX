@@ -1263,34 +1263,38 @@ GeometryGenerator::MeshData GeometryGenerator::CreateMyCylinder() {
 		float z2 = radius * sin((currentAngle + degrees) * PI / 180);
 
 		/* TOP Origin */
-		meshData.Vertices[i++] = Vertex(0.0f, halfHeight, 0.0f);
+		meshData.Vertices[i++] = Vertex(x2, halfHeight, z2);
 		/* A */
 		meshData.Vertices[i++] = Vertex(x1, halfHeight, z1);
 		/* B */
-		meshData.Vertices[i++] = Vertex(x2,halfHeight,z2);
+		meshData.Vertices[i++] = Vertex(0.0f, halfHeight, 0.0f);
 
 		/* DOWN Origin */
-		meshData.Vertices[i++] = Vertex(0.0f,-halfHeight, 0.0f);
+		meshData.Vertices[i++] = Vertex(x1, -halfHeight, z1);
 		/* A */
 		meshData.Vertices[i++] = Vertex(x2,-halfHeight,z2);
 		/* B */
-		meshData.Vertices[i++] = Vertex(x1,-halfHeight, z1);
+		meshData.Vertices[i++] = Vertex(0.0f, -halfHeight, 0.0f);
 
 		/* SIDE 1 */
 		/* A */
-		meshData.Vertices[i++] = Vertex(x2,halfHeight,z2);
+		//meshData.Vertices[i++] = Vertex(x2,halfHeight,z2);
+		meshData.Vertices[i++] = Vertex(x1, -halfHeight, z1);
 		/* B */
 		meshData.Vertices[i++] = Vertex(x1,halfHeight, z1);
 		/* C */
-		meshData.Vertices[i++] = Vertex(x1,-halfHeight, z1);
+		//meshData.Vertices[i++] = Vertex(x1,-halfHeight, z1);
+		meshData.Vertices[i++] = Vertex(x2, halfHeight, z2);
 
 		/* SIDE 2 */
 		/* C */
-		meshData.Vertices[i++] = Vertex(x1,-halfHeight,z1); 
+		//meshData.Vertices[i++] = Vertex(x1,-halfHeight,z1); 
+		meshData.Vertices[i++] = Vertex(x2, halfHeight, z2);
 		/* D */										 
 		meshData.Vertices[i++] = Vertex(x2,-halfHeight,z2); 
 		/* A */										 
-		meshData.Vertices[i++] = Vertex(x2, halfHeight,z2); 
+		//meshData.Vertices[i++] = Vertex(x2, halfHeight,z2); 
+		meshData.Vertices[i++] = Vertex(x1, -halfHeight, z1);
 	}
 
 	for (int j = 0; j < vertices; j++) {

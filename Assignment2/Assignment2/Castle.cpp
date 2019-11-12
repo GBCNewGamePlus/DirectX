@@ -150,6 +150,11 @@ private:
 	float mRadius = 50.0f;
 */
 	POINT mLastMousePos;
+
+	float mBasePathway = 42;
+	float mPathwayLeft = 4.58f;
+	float mPathwayRight = -4.58f;
+
 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
@@ -491,17 +496,70 @@ void Castle::UpdateMainPassCB(const GameTimer& gt)
 	mMainPassCB.FarZ = 1000.0f;
 	mMainPassCB.TotalTime = gt.TotalTime();
 	mMainPassCB.DeltaTime = gt.DeltaTime();
-	//mMainPassCB.AmbientLight = {0.9f, 0.9f, 0.9f, 1.0f };
-	mMainPassCB.AmbientLight = {0.25f, 0.25f, 0.35f, 1.0f };
-	mMainPassCB.Lights[0].Strength = {0.6f, 0.2f, 0.2f};
-	mMainPassCB.Lights[0].Position = {0, 10, 0};
+	mMainPassCB.AmbientLight = {0.4f, 0.4f, 0.6f, 1.0f };
+
+	// SIMS IND 1 and 2
+	mMainPassCB.Lights[0].Direction = { 1, 0, 0 };
+	mMainPassCB.Lights[0].Strength = {0.8f, 0.1f, 0.1f};
+	mMainPassCB.Lights[0].Position = {21.55f, 5.9f, -11};
 	mMainPassCB.Lights[0].FalloffStart = 10;
 	mMainPassCB.Lights[0].FalloffEnd = 12;
-	mMainPassCB.Lights[1].Direction = {0, -1, 0};
-	mMainPassCB.Lights[1].Strength = {0.6f, 0.6f, 0.6f};
-	mMainPassCB.Lights[1].Position = {30, 10, 30};
+
+	mMainPassCB.Lights[1].Direction = { 1, 0, 0 };
+	mMainPassCB.Lights[1].Strength = { 0.8f, 0.1f, 0.1f };
+	mMainPassCB.Lights[1].Position = { 21.55f, 5.9f, 11 };
 	mMainPassCB.Lights[1].FalloffStart = 10;
 	mMainPassCB.Lights[1].FalloffEnd = 12;
+
+	mMainPassCB.Lights[2].Direction = { 0, -1, 0 };
+	mMainPassCB.Lights[2].Strength = { 1, 1 , 1 };
+	mMainPassCB.Lights[2].Position = { 0, 50, 0 };
+	mMainPassCB.Lights[2].FalloffStart = 15;
+	mMainPassCB.Lights[2].FalloffEnd = 40;
+
+	mMainPassCB.Lights[3].Direction = { 0, -1, 0 };
+	mMainPassCB.Lights[3].Strength = { 0.8f, 0.1f, 0.1f };
+	mMainPassCB.Lights[3].Position = { 20.8f, 26.83f, -21.5f };
+	mMainPassCB.Lights[3].FalloffStart = 10;
+	mMainPassCB.Lights[3].FalloffEnd = 12;
+
+	mMainPassCB.Lights[4].Direction = { 0, -1, 0 };
+	mMainPassCB.Lights[4].Strength = { 0.8f, 0.1f, 0.1f };
+	mMainPassCB.Lights[4].Position = { -22.21f, 26.83f, -21.5f };
+	mMainPassCB.Lights[4].FalloffStart = 10;
+	mMainPassCB.Lights[4].FalloffEnd = 12;
+
+	mMainPassCB.Lights[5].Direction = { 0, -1, 0 };
+	mMainPassCB.Lights[5].Strength = { 0.8f, 0.1f, 0.1f };
+	mMainPassCB.Lights[5].Position = { 20.8f, 26.83f, 21.67f };
+	mMainPassCB.Lights[5].FalloffStart = 10;
+	mMainPassCB.Lights[5].FalloffEnd = 12;
+
+	mMainPassCB.Lights[6].Direction = { 0, -1, 0 };
+	mMainPassCB.Lights[6].Strength = { 0.8f, 0.1f, 0.1f };
+	mMainPassCB.Lights[6].Position = { -20.19f, 26.83f, 21.67f };
+	mMainPassCB.Lights[6].FalloffStart = 10;
+	mMainPassCB.Lights[6].FalloffEnd = 12;
+
+	// Beacons
+	mMainPassCB.Lights[8].Direction = { 0, -1, 0 };
+	mMainPassCB.Lights[8].Strength = { 0.8f, 0.8f, 0.8f };
+	mMainPassCB.Lights[8].Position = { mBasePathway + 10, 12.26f, mPathwayRight - 1 };
+	mMainPassCB.Lights[8].FalloffStart = 10;
+	mMainPassCB.Lights[8].FalloffEnd = 20;
+
+	mMainPassCB.Lights[9].Direction = { 0, -1, 0 };
+	mMainPassCB.Lights[9].Strength = { 0.8f, 0.8f, 0.8f };
+	mMainPassCB.Lights[9].Position = { mBasePathway + 10, 12.26f, mPathwayLeft + 1 };
+	mMainPassCB.Lights[9].FalloffStart = 10;
+	mMainPassCB.Lights[9].FalloffEnd = 20;
+
+
+	mMainPassCB.Lights[10].Direction = { -1, -1, 0 };
+	mMainPassCB.Lights[10].Strength = { 0.8f, 0.8f, 0.8f };
+	mMainPassCB.Lights[10].Position = { 23.55f, 15.9f, 0 };
+	mMainPassCB.Lights[10].FalloffStart = 10;
+	mMainPassCB.Lights[10].FalloffEnd = 40;
 
 	auto currPassCB = mCurrFrameResource->PassCB.get();
 	currPassCB->CopyData(0, mMainPassCB);
@@ -1687,8 +1745,8 @@ void Castle::BuildRenderGeoItems()
 	//// Strange sphere on top of central building
 	BuildRenderGeoItem(i++, "mySphere", "brickDark", XMFLOAT3(15, 15, 15), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 11.91f, 0));
 	//// Strange indicator
-	BuildRenderGeoItem(i++, "simsInd", "sims", XMFLOAT3(1, 1, 1), XMFLOAT3(90, 0, 0), XMFLOAT3(21.55f, 5.9f, -11));
-	BuildRenderGeoItem(i++, "simsInd", "sims", XMFLOAT3(1, 1, 1), XMFLOAT3(90, 0, 0), XMFLOAT3(21.55f, 5.9f, 11));
+	BuildRenderGeoItem(i++, "simsInd", "sims", XMFLOAT3(5, 1, 1), XMFLOAT3(90, 0, 0), XMFLOAT3(21.55f, 5.9f, -11));
+	BuildRenderGeoItem(i++, "simsInd", "sims", XMFLOAT3(5, 1, 1), XMFLOAT3(90, 0, 0), XMFLOAT3(21.55f, 5.9f, 11));
 	//// StarPortal
 	BuildRenderGeoItem(i++, "star", "black", XMFLOAT3(15, 15, 1), XMFLOAT3(0, 90, 0), XMFLOAT3(21.55f, 5.9f, 0));
 	//// Pyramids for good luck
@@ -1697,26 +1755,27 @@ void Castle::BuildRenderGeoItems()
 	BuildRenderGeoItem(i++, "pyramid", "bricks3", XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(20.8f, 24.83f, 21.67f));
 	BuildRenderGeoItem(i++, "pyramid", "bricks3", XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(-20.19f, 24.83f, 21.67f));
 	//// The spaceship
-	BuildRenderGeoItem(i++, "hexagon", "bricksOnAcid", XMFLOAT3(50, 5, 50), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 40, 0));
+	BuildRenderGeoItem(i++, "hexagon", "bricksOnAcid", XMFLOAT3(50, 5, 50), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 50, 0));
 	//// Pathways
-	float basePathway = 42;
-	float pathwayLeft = 4.58f;
-	float pathwayRight = -4.58f;
 
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway    , 2.26f, pathwayLeft));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway + 2, 2.26f, pathwayLeft));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway + 4, 2.26f, pathwayLeft));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway + 6, 2.26f, pathwayLeft));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway + 8, 2.26f, pathwayLeft));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway    , 2.26f, pathwayRight));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway + 2, 2.26f, pathwayRight));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway + 4, 2.26f, pathwayRight));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway + 6, 2.26f, pathwayRight));
-	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway + 8, 2.26f, pathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(mBasePathway    , 2.26f, mPathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(mBasePathway + 2, 2.26f, mPathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(mBasePathway + 4, 2.26f, mPathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(mBasePathway + 6, 2.26f, mPathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(mBasePathway + 8, 2.26f, mPathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(mBasePathway    , 2.26f, mPathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(mBasePathway + 2, 2.26f, mPathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(mBasePathway + 4, 2.26f, mPathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(mBasePathway + 6, 2.26f, mPathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(mBasePathway + 8, 2.26f, mPathwayRight));
+	// Beacons
+	BuildRenderGeoItem(i++, "myCylinder", "stone", XMFLOAT3(2, 7.5f, 2), XMFLOAT3(0, 0, 0), XMFLOAT3(mBasePathway + 10, 2.26f, mPathwayLeft + 1));
+	BuildRenderGeoItem(i++, "myCylinder", "stone", XMFLOAT3(2, 7.5f, 2), XMFLOAT3(0, 0, 0), XMFLOAT3(mBasePathway + 10, 2.26f, mPathwayRight - 1));
+
 	//// Why a prism here?
-	BuildRenderGeoItem(i++, "triPrism", "bricks3", XMFLOAT3(5, 5, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 20, 0));
+	BuildRenderGeoItem(i++, "triPrism", "bricks3", XMFLOAT3(15, 15, 15), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 20, -3.0f));
 
-
+	
 }
 
 void Castle::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
