@@ -94,7 +94,7 @@ private:
 	void BuildPSOs();
 	void BuildFrameResources();
 	void BuildMaterials();
-	void BuildRenderItems();
+	void BuildRenderGeoItems();
 	void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
 
 	std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
@@ -141,8 +141,8 @@ private:
 	XMFLOAT4X4 mView = MathHelper::Identity4x4();
 	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 
-	float mTheta = -0.562857211;/* 1.5f*XM_PI;*/
-	float mPhi = 1.06901431;/*0.2f*XM_PI;*/
+	float mTheta = -0.562857211f;/* 1.5f*XM_PI;*/
+	float mPhi = 1.06901431f;/*0.2f*XM_PI;*/
 	float mRadius = 145.0f;
 /*
 	float mTheta = 1.5f*XM_PI;
@@ -210,7 +210,7 @@ bool Castle::Initialize()
 	BuildTreeSpritesGeometry();
 	BuildShapeGeometry();
 	BuildMaterials();
-	BuildRenderItems();
+	BuildRenderGeoItems();
 	BuildFrameResources();
 	BuildPSOs();
 
@@ -491,7 +491,7 @@ void Castle::UpdateMainPassCB(const GameTimer& gt)
 	mMainPassCB.FarZ = 1000.0f;
 	mMainPassCB.TotalTime = gt.TotalTime();
 	mMainPassCB.DeltaTime = gt.DeltaTime();
-	mMainPassCB.AmbientLight = {0.4f, 0.4f, 0.4f, 1.0f };
+	mMainPassCB.AmbientLight = {0.9f, 0.9f, 0.9f, 1.0f };
 	//mMainPassCB.AmbientLight = {0.25f, 0.25f, 0.35f, 1.0f };
 	mMainPassCB.Lights[0].Strength = {0.6f, 0.6f, 0.6f};
 	mMainPassCB.Lights[0].Position = {0, 10, 0};
@@ -518,7 +518,7 @@ void Castle::UpdateWaves(const GameTimer& gt)
 		int i = MathHelper::Rand(4, mWaves->RowCount() - 5);
 		int j = MathHelper::Rand(4, mWaves->ColumnCount() - 5);
 
-		float r = MathHelper::RandF(0.2f, 0.5f);
+		float r = MathHelper::RandF(0.1f, 0.3f);
 
 		mWaves->Disturb(i, j, r);
 	}
@@ -538,7 +538,7 @@ void Castle::UpdateWaves(const GameTimer& gt)
 		// Derive tex-coords from position by 
 		// mapping [-w/2,w/2] --> [0,1]
 		v.TexC.x = 0.5f + v.Pos.x / mWaves->Width();
-		v.TexC.y = 0.5f - v.Pos.z / mWaves->Depth();
+		v.TexC.y = - v.Pos.z / mWaves->Depth();
 
 		currWavesVB->CopyData(i, v);
 	}
@@ -832,16 +832,17 @@ void Castle::BuildLandGeometry()
 		//vertices[i].Pos.y = GetHillsHeight(p.x, p.z);
 		float xPos = vertices[i].Pos.x;
 		float zPos = vertices[i].Pos.z;
-		if (xPos < -70 || xPos > 70 || zPos < -70 || zPos > 70)
+		if (xPos < -40 || xPos > 40 || zPos < -40 || zPos > 40)
 		{
-			vertices[i].Pos.y = 2;
+			vertices[i].Pos.y = 1.5f;
 		}
-		else if ((xPos > -60 && xPos < 60) && (zPos > -60 && zPos < 60))
+		else if ((xPos > -30 && xPos < 30) && (zPos > -30 && zPos < 30))
 		{
-			vertices[i].Pos.y = 2;
+			vertices[i].Pos.y = 1.5f;
 		}
 		else
 		{
+			// ditch
 			vertices[i].Pos.y = -20;
 		}
 		vertices[i].Normal = GetHillsNormal(p.x, p.z);
@@ -938,7 +939,6 @@ void Castle::BuildWavesGeometry()
 
 	mGeometries["waterGeo"] = std::move(geo);
 }
-
 void Castle::BuildBoxGeometry()
 {
 	GeometryGenerator geoGen;
@@ -1305,8 +1305,8 @@ void Castle::BuildTreeSpritesGeometry()
 		XMFLOAT2 Size;
 	};
 
-	static const int treeCount = 8;
-	std::array<TreeSpriteVertex, 8> vertices;
+	static const int treeCount = 20;
+	std::array<TreeSpriteVertex, treeCount> vertices;
 
 	/*for (UINT i = 0; i < treeCount; ++i)
 	{
@@ -1321,21 +1321,33 @@ void Castle::BuildTreeSpritesGeometry()
 		vertices[i].Size = XMFLOAT2(20.0f, 20.0f);
 	}*/
 
-	vertices[0].Pos = XMFLOAT3(-75, 10, 75);
-	vertices[1].Pos = XMFLOAT3(75, 10, 75);
-	vertices[2].Pos = XMFLOAT3(-75, 10, -75);
-	vertices[3].Pos = XMFLOAT3(75, 10, -75);
-	vertices[4].Pos = XMFLOAT3(0, 10, 75);
-	vertices[5].Pos = XMFLOAT3(0, 10, -75);
-	vertices[6].Pos = XMFLOAT3(75, 10, 0);
-	vertices[7].Pos = XMFLOAT3(-75, 10, 0);
+	vertices[0].Pos  = XMFLOAT3(-75, 10,  75);
+	vertices[1].Pos  = XMFLOAT3(-45, 10,  75);
+	vertices[2].Pos  = XMFLOAT3(-15, 10,  75);
+	vertices[3].Pos  = XMFLOAT3( 15, 10,  75);
+	vertices[4].Pos  = XMFLOAT3( 45, 10,  75);
+	vertices[5].Pos  = XMFLOAT3( 75, 10,  75);
+	vertices[6].Pos  = XMFLOAT3( 75, 10,  45);
+	vertices[7].Pos  = XMFLOAT3( 75, 10,  15);
+	vertices[8].Pos  = XMFLOAT3( 75, 10, -15);
+	vertices[9].Pos  = XMFLOAT3( 75, 10, -45);
+	vertices[10].Pos = XMFLOAT3( 75, 10, -75);
+	vertices[11].Pos = XMFLOAT3( 45, 10, -75);
+	vertices[12].Pos = XMFLOAT3( 15, 10, -75);
+	vertices[13].Pos = XMFLOAT3(-15, 10, -75);
+	vertices[14].Pos = XMFLOAT3(-45, 10, -75);
+	vertices[15].Pos = XMFLOAT3(-75, 10, -75);
+	vertices[16].Pos = XMFLOAT3(-75, 10, -45);
+	vertices[17].Pos = XMFLOAT3(-75, 10, -15);
+	vertices[18].Pos = XMFLOAT3(-75, 10,  15);
+	vertices[19].Pos = XMFLOAT3(-75, 10,  45);
 
 	for (UINT i = 0; i < treeCount; ++i)
 	{
 		vertices[i].Size = XMFLOAT2(20.0f, 20.0f);
 	}
 
-	std::array<std::uint16_t, 8> indices = {0, 1, 2, 3, 4, 5, 6, 7};
+	std::array<std::uint16_t, treeCount> indices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
 
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(TreeSpriteVertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
@@ -1513,7 +1525,7 @@ void Castle::BuildMaterials()
 	auto water = std::make_unique<Material>();
 	water->Name = "water";
 	water->MatCBIndex = 1;
-	water->DiffuseSrvHeapIndex = 3;
+	water->DiffuseSrvHeapIndex = 1;
 	water->DiffuseAlbedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
 	water->FresnelR0 = XMFLOAT3(0.1f, 0.1f, 0.1f);
 	water->Roughness = 0.0f;
@@ -1603,12 +1615,15 @@ void Castle::BuildMaterials()
 	mMaterials["bricksOnAcid"] = std::move(bricksOnAcid);
 }
 
-void Castle::BuildRenderItems()
+void Castle::BuildRenderGeoItems()
 {
 	int i = 0;
 	auto wavesRitem = std::make_unique<RenderItem>();
-	wavesRitem->World = MathHelper::Identity4x4();
-	XMStoreFloat4x4(&wavesRitem->TexTransform, XMMatrixScaling(5.0f, 5.0f, 1.0f));
+	XMMATRIX transResult = XMMatrixScaling(5.0f, 5.0f, 1.0f);
+	transResult *= XMMatrixTranslation(0, -1.5f, 0);
+	//XMStoreFloat4x4(&wavesRitem->World, transResult);
+
+	XMStoreFloat4x4(&wavesRitem->TexTransform, transResult);
 	wavesRitem->ObjCBIndex = i++;
 	wavesRitem->Mat = mMaterials["water"].get();
 	wavesRitem->Geo = mGeometries["waterGeo"].get();
@@ -1633,18 +1648,6 @@ void Castle::BuildRenderItems()
 	mRitemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
 	mAllRitems.push_back(std::move(gridRitem));
 
-	auto boxRitem = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&boxRitem->World, XMMatrixTranslation(3.0f, 2.0f, -9.0f));
-	boxRitem->ObjCBIndex = i++;
-	boxRitem->Mat = mMaterials["wirefence"].get();
-	boxRitem->Geo = mGeometries["boxGeo"].get();
-	boxRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
-	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
-	boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
-	mRitemLayer[(int)RenderLayer::AlphaTested].push_back(boxRitem.get());
-	mAllRitems.push_back(std::move(boxRitem));
-
 	auto treeSpritesRitem = std::make_unique<RenderItem>();
 	treeSpritesRitem->World = MathHelper::Identity4x4();
 	treeSpritesRitem->ObjCBIndex = i++;
@@ -1659,7 +1662,59 @@ void Castle::BuildRenderItems()
 	mRitemLayer[(int)RenderLayer::AlphaTestedTreeSprites].push_back(treeSpritesRitem.get());
 	mAllRitems.push_back(std::move(treeSpritesRitem));
 
-	BuildRenderGeoItem(i++, "star", "grass", XMFLOAT3(15, 15, 10), XMFLOAT3(0, 90, 0), XMFLOAT3(21.55, 5.9, 0));
+	// The castle
+	//// Bridge
+	BuildRenderGeoItem(i++, "cube", "stone", XMFLOAT3(20.05f, 1.5, 8.33f), XMFLOAT3(0, 0, 0), XMFLOAT3(30.74f, 1, 0));
+	//// Walls
+	BuildRenderGeoItem(i++, "cube", "brick", XMFLOAT3(27.86f, 1.76f, 44.744f), XMFLOAT3(0, 180, 90), XMFLOAT3(-22.27f, 2, 0.144f));
+	BuildRenderGeoItem(i++, "cube", "brick", XMFLOAT3(27.86f, 1.76f, 44.744f), XMFLOAT3(0, 0, 90), XMFLOAT3(20.74f, 2, 0.144f));
+	BuildRenderGeoItem(i++, "cube", "brick", XMFLOAT3(27.86f, 1.76f, 44.744f), XMFLOAT3(0, 90, 90), XMFLOAT3(-0.72f, 2, -21.68f));
+	BuildRenderGeoItem(i++, "cube", "brick", XMFLOAT3(27.86f, 1.76f, 44.744f), XMFLOAT3(0, 270, 90), XMFLOAT3(-0.72f, 2, 21.49f));
+	//// Central Cube
+	BuildRenderGeoItem(i++, "cube", "brick", XMFLOAT3(23, 15, 23), XMFLOAT3(0, 180, 90), XMFLOAT3(0, 4.4f, 0));
+	//// Portal
+	BuildRenderGeoItem(i++, "cube", "black", XMFLOAT3(19.05f, 1.95f, 8.32f), XMFLOAT3(0, 0, 0), XMFLOAT3(20.76f, -2.4f, 0));
+	BuildRenderGeoItem(i++, "myCylinder", "black", XMFLOAT3(8.38f, 0.96f, 8.38f), XMFLOAT3(0, 0, 0), XMFLOAT3(20.76f, 7.02f, 0.011f));
+	//// Towers
+	BuildRenderGeoItem(i++, "myCylinder", "brickDark", XMFLOAT3(4, 40, 4), XMFLOAT3(0, 0, 0), XMFLOAT3(20.8f, 2.73f, -21.5f));
+	BuildRenderGeoItem(i++, "myCylinder", "brickDark", XMFLOAT3(4, 40, 4), XMFLOAT3(0, 0, 0), XMFLOAT3(-22.21f, 2.73f, -21.5f));
+	BuildRenderGeoItem(i++, "myCylinder", "brickDark", XMFLOAT3(4, 40, 4), XMFLOAT3(0, 0, 0), XMFLOAT3(20.8f, 2.73f, 21.67f));
+	BuildRenderGeoItem(i++, "myCylinder", "brickDark", XMFLOAT3(4, 40, 4), XMFLOAT3(0, 0, 0), XMFLOAT3(-20.19f, 2.73f, 21.67f));
+	BuildRenderGeoItem(i++, "myCylinder", "brickDark", XMFLOAT3(5, 0.3f, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(20.8f, 22.83f, -21.5f));
+	BuildRenderGeoItem(i++, "myCylinder", "brickDark", XMFLOAT3(5, 0.3f, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(-22.21f, 22.83f, -21.5f));
+	BuildRenderGeoItem(i++, "myCylinder", "brickDark", XMFLOAT3(5, 0.3f, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(20.8f, 22.83f, 21.67f));
+	BuildRenderGeoItem(i++, "myCylinder", "brickDark", XMFLOAT3(5, 0.3f, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(-20.19f, 22.83f, 21.67f));
+	//// Strange sphere on top of central building
+	BuildRenderGeoItem(i++, "mySphere", "brickDark", XMFLOAT3(15, 15, 15), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 11.91f, 0));
+	//// Strange indicator
+	BuildRenderGeoItem(i++, "simsInd", "sims", XMFLOAT3(1, 1, 1), XMFLOAT3(90, 0, 0), XMFLOAT3(21.55f, 5.9f, -11));
+	BuildRenderGeoItem(i++, "simsInd", "sims", XMFLOAT3(1, 1, 1), XMFLOAT3(90, 0, 0), XMFLOAT3(21.55f, 5.9f, 11));
+	//// StarPortal
+	BuildRenderGeoItem(i++, "star", "black", XMFLOAT3(15, 15, 1), XMFLOAT3(0, 90, 0), XMFLOAT3(21.55f, 5.9f, 0));
+	//// Pyramids for good luck
+	BuildRenderGeoItem(i++, "pyramid", "bricks3", XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(20.8f, 24.83f, -21.5f));
+	BuildRenderGeoItem(i++, "pyramid", "bricks3", XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(-22.21f, 24.83f, -21.5f));
+	BuildRenderGeoItem(i++, "pyramid", "bricks3", XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(20.8f, 24.83f, 21.67f));
+	BuildRenderGeoItem(i++, "pyramid", "bricks3", XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(-20.19f, 24.83f, 21.67f));
+	//// The spaceship
+	BuildRenderGeoItem(i++, "hexagon", "bricksOnAcid", XMFLOAT3(50, 5, 50), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 40, 0));
+	//// Pathways
+	float basePathway = 42;
+	float pathwayLeft = 4.58f;
+	float pathwayRight = -4.58f;
+
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway    , 2.26f, pathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway + 2, 2.26f, pathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway + 4, 2.26f, pathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway + 6, 2.26f, pathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0,  90, 0), XMFLOAT3(basePathway + 8, 2.26f, pathwayLeft));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway    , 2.26f, pathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway + 2, 2.26f, pathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway + 4, 2.26f, pathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway + 6, 2.26f, pathwayRight));
+	BuildRenderGeoItem(i++, "wedge", "bricks3", XMFLOAT3(2, 2, 2), XMFLOAT3(0, -90, 0), XMFLOAT3(basePathway + 8, 2.26f, pathwayRight));
+	//// Why a prism here?
+	BuildRenderGeoItem(i++, "triPrism", "bricks3", XMFLOAT3(5, 5, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 20, 0));
 
 
 }
