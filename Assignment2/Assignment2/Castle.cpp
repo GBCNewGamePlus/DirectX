@@ -491,9 +491,9 @@ void Castle::UpdateMainPassCB(const GameTimer& gt)
 	mMainPassCB.FarZ = 1000.0f;
 	mMainPassCB.TotalTime = gt.TotalTime();
 	mMainPassCB.DeltaTime = gt.DeltaTime();
-	mMainPassCB.AmbientLight = {0.9f, 0.9f, 0.9f, 1.0f };
-	//mMainPassCB.AmbientLight = {0.25f, 0.25f, 0.35f, 1.0f };
-	mMainPassCB.Lights[0].Strength = {0.6f, 0.6f, 0.6f};
+	//mMainPassCB.AmbientLight = {0.9f, 0.9f, 0.9f, 1.0f };
+	mMainPassCB.AmbientLight = {0.25f, 0.25f, 0.35f, 1.0f };
+	mMainPassCB.Lights[0].Strength = {0.6f, 0.2f, 0.2f};
 	mMainPassCB.Lights[0].Position = {0, 10, 0};
 	mMainPassCB.Lights[0].FalloffStart = 10;
 	mMainPassCB.Lights[0].FalloffEnd = 12;
