@@ -5,15 +5,40 @@
 #include "FrameResource.h"
 #include "Waves.h"
 #include "Camera.h"
+#include <tchar.h>
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DirectX::PackedVector;
+using namespace std;
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 
 const int gNumFrameResources = 3;
+
+struct BlockInfo
+{
+	XMFLOAT3 position;
+	XMFLOAT3 scale;
+
+	BlockInfo()
+	{
+		position = XMFLOAT3(0, 0, 0);
+		scale = XMFLOAT3(0, 0, 0);
+	}
+
+	BlockInfo(XMFLOAT3 pos, XMFLOAT3 sca)
+	{
+		position = pos;
+		scale = sca;
+	}
+};
+
+BlockInfo blocks[1];
+int blocksSize = 1;
+int collisionOffset = 2;
+bool blockX, blockZ;
 
 struct RenderItem
 {
@@ -97,6 +122,7 @@ private:
 	void BuildMaterials();
 	void BuildRenderGeoItems();
 	void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
+	void CollisionDetection();
 
 	std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 
@@ -147,8 +173,7 @@ private:
 
 };
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
-	PSTR cmdLine, int showCmd)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {
 	// Enable run-time memory check for debug builds.
 #if defined(DEBUG) | defined(_DEBUG)
@@ -231,6 +256,7 @@ void Castle::OnResize()
 
 void Castle::Update(const GameTimer& gt)
 {
+	CollisionDetection();
 	OnKeyboardInput(gt);
 	UpdateCamera(gt);
 
@@ -253,6 +279,33 @@ void Castle::Update(const GameTimer& gt)
 	UpdateMaterialCBs(gt);
 	UpdateMainPassCB(gt);
 	UpdateWaves(gt);
+}
+
+void Castle::CollisionDetection()
+{
+	blockX = false;
+	blockZ = false;
+	float cameraX = mCamera.GetPosition3f().x;
+	float cameraZ = mCamera.GetPosition3f().z;
+
+	for (int i = 0; i < blocksSize; i++)
+	{
+		float cubeX1 = blocks[i].position.x - blocks[i].scale.x / 2;
+		float cubeX2 = blocks[i].position.x + blocks[i].scale.x / 2;
+		float cubeZ1 = blocks[i].position.z - blocks[i].scale.z / 2;
+		float cubeZ2 = blocks[i].position.z + blocks[i].scale.z / 2;
+
+		char buf[100];
+		sprintf_s(buf, "X:%f - %f\nZ:%f - %f\nCamX:%f CamZ:%f\n\n", cubeX1, cubeX2, cubeZ1, cubeZ2, cameraX, cameraZ);
+		OutputDebugStringA(buf);
+		if (cameraX >= cubeX1 && cameraX <= cubeX2)
+		{
+			if (cameraZ >= cubeZ1 && cameraZ <= cubeZ2)
+			{
+				mCamera.SetPosition(0, 0, 0);
+			}
+		}
+	}
 }
 
 void Castle::Draw(const GameTimer& gt)
@@ -868,6 +921,7 @@ void Castle::BuildShadersAndInputLayouts()
 		{ "SIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 	};
 }
+
 void Castle::BuildLandGeometry()
 {
 	GeometryGenerator geoGen;
@@ -994,6 +1048,7 @@ void Castle::BuildWavesGeometry()
 
 	mGeometries["waterGeo"] = std::move(geo);
 }
+
 void Castle::BuildBoxGeometry()
 {
 	GeometryGenerator geoGen;
@@ -1042,6 +1097,7 @@ void Castle::BuildBoxGeometry()
 
 	mGeometries["boxGeo"] = std::move(geo);
 }
+
 void Castle::BuildShapeGeometry()
 {
 	GeometryGenerator geoGen;
@@ -1351,6 +1407,7 @@ void Castle::BuildShapeGeometry()
 
 	mGeometries[geo->Name] = std::move(geo);
 }
+
 void Castle::BuildTreeSpritesGeometry()
 {
 	//step5
@@ -1553,6 +1610,7 @@ void Castle::BuildRenderGeoItem(int index, std::string itemName, std::string mat
 	mAllRitems.push_back(std::move(genItem));
 
 }
+
 void Castle::BuildMaterials()
 {
 	auto grass = std::make_unique<Material>();
@@ -1760,7 +1818,9 @@ void Castle::BuildRenderGeoItems()
 	//// Why a prism here?
 	BuildRenderGeoItem(i++, "triPrism", "bricks3", XMFLOAT3(15, 15, 15), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 20, -3.0f));
 
-	
+	// The Maze
+	BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(30, 30, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(100, 15 + 1.5f, 0));
+	blocks[0] = BlockInfo(XMFLOAT3(100, 15 + 1.5f, 0), XMFLOAT3(30, 30, 30));
 }
 
 void Castle::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
