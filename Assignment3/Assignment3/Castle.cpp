@@ -38,7 +38,6 @@ struct BlockInfo
 BlockInfo blocks[31];
 int blocksSize = 31;
 int collisionOffset = 2;
-bool blockX, blockZ;
 
 struct RenderItem
 {
@@ -284,11 +283,6 @@ void Castle::Update(const GameTimer& gt)
 
 void Castle::CollisionDetection()
 {
-	blockX = false;
-	blockZ = false;
-	float cameraX = mCamera.GetPosition3f().x;
-	float cameraZ = mCamera.GetPosition3f().z;
-
 	for (int i = 0; i < blocksSize; i++)
 	{
 		float cubeX1 = blocks[i].position.x - blocks[i].scale.x / 2;
@@ -299,39 +293,39 @@ void Castle::CollisionDetection()
 		//sprintf_s(buf, "Camera(%f,%f)\n", cameraZ, cameraX);
 		//OutputDebugStringA(buf);
 		
-		if (cameraX >= cubeX1 - collisionOffset && cameraX <= cubeX2 + collisionOffset)
+		if (mCamera.GetPosition3f().x >= cubeX1 - collisionOffset && mCamera.GetPosition3f().x <= cubeX2 + collisionOffset)
 		{
-			if (cameraZ >= cubeZ1 - collisionOffset && cameraZ <= cubeZ2 + collisionOffset)
+			if (mCamera.GetPosition3f().z >= cubeZ1 - collisionOffset && mCamera.GetPosition3f().z <= cubeZ2 + collisionOffset)
 			{
-				float distanceX = fabs(fabs(cameraX) - fabs(blocks[i].position.x));
-				float distanceZ = fabs(fabs(cameraZ) - fabs(blocks[i].position.z));
+				float distanceX = fabs(fabs(mCamera.GetPosition3f().x) - fabs(blocks[i].position.x));
+				float distanceZ = fabs(fabs(mCamera.GetPosition3f().z) - fabs(blocks[i].position.z));
 
 				if (distanceX > distanceZ)
 				{ // That means the collision happened on the x-axis.
-					if (cameraX < blocks[i].position.x)
+					if (mCamera.GetPosition3f().x < blocks[i].position.x)
 					{ // Then collision happened at the south side (-X).
-						mCamera.SetPosition(cubeX1 - collisionOffset, mCamera.GetPosition3f().y, cameraZ);
+						mCamera.SetPosition(cubeX1 - collisionOffset, mCamera.GetPosition3f().y, mCamera.GetPosition3f().z);
 						sprintf_s(buf, "[%d]SOUTH\n", i);
 						OutputDebugStringA(buf);
 					}
 					else
 					{ // Then collision happened at the north side (+X).
-						mCamera.SetPosition(cubeX2 + collisionOffset, mCamera.GetPosition3f().y, cameraZ);
+						mCamera.SetPosition(cubeX2 + collisionOffset, mCamera.GetPosition3f().y, mCamera.GetPosition3f().z);
 						sprintf_s(buf, "[%d]NORTH\n", i);
 						OutputDebugStringA(buf);
 					}
 				}
 				else
 				{ // That means the collision happened on the z-axis.
-					if (cameraZ < blocks[i].position.z)
+					if (mCamera.GetPosition3f().z < blocks[i].position.z)
 					{ // Then collision happened at the east side (-Z).
-						mCamera.SetPosition(cameraX, mCamera.GetPosition3f().y, cubeZ1 - collisionOffset);
+						mCamera.SetPosition(mCamera.GetPosition3f().x, mCamera.GetPosition3f().y, cubeZ1 - collisionOffset);
 						sprintf_s(buf, "[%d]EAST\n", i);
 						OutputDebugStringA(buf);
 					}
 					else
 					{ // Then collision happened at the west side (+Z).
-						mCamera.SetPosition(cameraX, mCamera.GetPosition3f().y, cubeZ2 + collisionOffset);
+						mCamera.SetPosition(mCamera.GetPosition3f().x, mCamera.GetPosition3f().y, cubeZ2 + collisionOffset);
 						sprintf_s(buf, "[%d]WEST\n", i);
 						OutputDebugStringA(buf);
 					}
