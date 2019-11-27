@@ -164,7 +164,6 @@ XMMATRIX Camera::GetProj()const
 	return XMLoadFloat4x4(&mProj);
 }
 
-
 XMFLOAT4X4 Camera::GetView4x4f()const
 {
 	assert(!mViewDirty);

@@ -35,8 +35,8 @@ struct BlockInfo
 	}
 };
 
-BlockInfo blocks[1];
-int blocksSize = 1;
+BlockInfo blocks[31];
+int blocksSize = 31;
 int collisionOffset = 2;
 bool blockX, blockZ;
 
@@ -220,7 +220,8 @@ bool Castle::Initialize()
 
 	mWaves = std::make_unique<Waves>(155, 155, 1.0f, 0.03f, 4.0f, 0.2f);
 
-	mCamera.SetPosition(67.0f, mCamera.YPOSITION, -1.2f);
+	mCamera.SetPosition(210, mCamera.YPOSITION, 50);
+	//mCamera.RotateY(180);
 
 	LoadTextures();
 	BuildRootSignature();
@@ -294,15 +295,47 @@ void Castle::CollisionDetection()
 		float cubeX2 = blocks[i].position.x + blocks[i].scale.x / 2;
 		float cubeZ1 = blocks[i].position.z - blocks[i].scale.z / 2;
 		float cubeZ2 = blocks[i].position.z + blocks[i].scale.z / 2;
-
 		char buf[100];
-		sprintf_s(buf, "X:%f - %f\nZ:%f - %f\nCamX:%f CamZ:%f\n\n", cubeX1, cubeX2, cubeZ1, cubeZ2, cameraX, cameraZ);
-		OutputDebugStringA(buf);
-		if (cameraX >= cubeX1 && cameraX <= cubeX2)
+		//sprintf_s(buf, "Camera(%f,%f)\n", cameraZ, cameraX);
+		//OutputDebugStringA(buf);
+		
+		if (cameraX >= cubeX1 - collisionOffset && cameraX <= cubeX2 + collisionOffset)
 		{
-			if (cameraZ >= cubeZ1 && cameraZ <= cubeZ2)
+			if (cameraZ >= cubeZ1 - collisionOffset && cameraZ <= cubeZ2 + collisionOffset)
 			{
-				mCamera.SetPosition(0, 0, 0);
+				float distanceX = fabs(fabs(cameraX) - fabs(blocks[i].position.x));
+				float distanceZ = fabs(fabs(cameraZ) - fabs(blocks[i].position.z));
+
+				if (distanceX > distanceZ)
+				{ // That means the collision happened on the x-axis.
+					if (cameraX < blocks[i].position.x)
+					{ // Then collision happened at the south side (-X).
+						mCamera.SetPosition(cubeX1 - collisionOffset, mCamera.GetPosition3f().y, cameraZ);
+						sprintf_s(buf, "[%d]SOUTH\n", i);
+						OutputDebugStringA(buf);
+					}
+					else
+					{ // Then collision happened at the north side (+X).
+						mCamera.SetPosition(cubeX2 + collisionOffset, mCamera.GetPosition3f().y, cameraZ);
+						sprintf_s(buf, "[%d]NORTH\n", i);
+						OutputDebugStringA(buf);
+					}
+				}
+				else
+				{ // That means the collision happened on the z-axis.
+					if (cameraZ < blocks[i].position.z)
+					{ // Then collision happened at the east side (-Z).
+						mCamera.SetPosition(cameraX, mCamera.GetPosition3f().y, cubeZ1 - collisionOffset);
+						sprintf_s(buf, "[%d]EAST\n", i);
+						OutputDebugStringA(buf);
+					}
+					else
+					{ // Then collision happened at the west side (+Z).
+						mCamera.SetPosition(cameraX, mCamera.GetPosition3f().y, cubeZ2 + collisionOffset);
+						sprintf_s(buf, "[%d]WEST\n", i);
+						OutputDebugStringA(buf);
+					}
+				}
 			}
 		}
 	}
@@ -1818,9 +1851,58 @@ void Castle::BuildRenderGeoItems()
 	//// Why a prism here?
 	BuildRenderGeoItem(i++, "triPrism", "bricks3", XMFLOAT3(15, 15, 15), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 20, -3.0f));
 
-	// The Maze
-	BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(30, 30, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(100, 15 + 1.5f, 0));
-	blocks[0] = BlockInfo(XMFLOAT3(100, 15 + 1.5f, 0), XMFLOAT3(30, 30, 30));
+	// The Maze - It is a 6x8 grid. 
+	float offset = -70;
+	for (int j = 0; j < 8; j++)
+	{ // South Wall
+		BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(230, 10, offset));
+		blocks[j] = BlockInfo(XMFLOAT3(230, 10, offset), XMFLOAT3(20, 20, 20));
+		offset += 20;
+	}
+
+	offset = 130;
+	for (int j = 8; j < 13; j++)
+	{ // East Wall
+		BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(offset, 10, 70));
+		blocks[j] = BlockInfo(XMFLOAT3(offset, 10, 70), XMFLOAT3(20, 20, 20));
+		offset += 20;
+	}
+
+	offset = 130;
+	for (int j = 13; j < 18; j++)
+	{ // West Wall
+		BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(offset, 10, -70));
+		blocks[j] = BlockInfo(XMFLOAT3(offset, 10, -70), XMFLOAT3(20, 20, 20));
+		offset += 20;
+	}
+
+	offset = -30;
+	for (int j = 18; j < 23; j++)
+	{ // North Wall
+		BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(130, 10, offset));
+		blocks[j] = BlockInfo(XMFLOAT3(130, 10, offset), XMFLOAT3(20, 20, 20));
+		offset += 20;
+	}
+
+	offset = -10;
+	for (int j = 23; j < 26; j++)
+	{ // Some Wall (hard to put in words)
+		BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(190, 10, offset));
+		blocks[j] = BlockInfo(XMFLOAT3(190, 10, offset), XMFLOAT3(20, 20, 20));
+		offset += 20;
+	}
+
+	// The rest of the maze
+	BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(170, 10, 30));
+	blocks[26] = BlockInfo(XMFLOAT3(170, 10, 30), XMFLOAT3(20, 20, 20));
+	BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(170, 10, -10));
+	blocks[27] = BlockInfo(XMFLOAT3(170, 10, -10), XMFLOAT3(20, 20, 20));
+	BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(150, 10, -10));
+	blocks[28] = BlockInfo(XMFLOAT3(150, 10, -10), XMFLOAT3(20, 20, 20));
+	BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(150, 10, -30));
+	blocks[29] = BlockInfo(XMFLOAT3(150, 10, -30), XMFLOAT3(20, 20, 20));
+	BuildRenderGeoItem(i++, "cube", "bricks3", XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0, 0), XMFLOAT3(190, 10, -50));
+	blocks[30] = BlockInfo(XMFLOAT3(190, 10, -50), XMFLOAT3(20, 20, 20));
 }
 
 void Castle::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
